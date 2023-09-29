@@ -6,8 +6,15 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'media',
   theme: {
     extend: {
+      colors: {
+        primary: '#5c6ac4',
+        secondary: '#304865',
+        tertiary: '#21687F',
+        background: '#1f2937',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

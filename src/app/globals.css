@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -16,12 +17,73 @@
   }
 }
 
-body {
+*/
+
+/* body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+} */
+
+
+@layer components {
+
+  ::-webkit-scrollbar {
+    @apply w-2 ml-4
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-secondary border-r-8
+    /* border-radius: 5px; */
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-tertiary
+  }
+  
+
+  body {
+    @apply flex h-screen w-screen items-start dark:text-white dark:bg-background overflow-hidden
+  }
+
+  main > div {
+    @apply flex flex-col justify-start items-center w-full
+  }
+
+  main > div > h1 {
+    text-shadow: 1px 1px 2px white;
+    @apply text-4xl mr-14 mb-10 grow-0
+  }
+
+  main > div > div {
+    @apply max-w-lg
+  }
+  
+  .sidebar-icon {
+    @apply relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto bg-gray-400 hover:bg-primary dark:bg-gray-800 text-primary hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg;
+  }
+
+  .sidebar-tooltip {
+    @apply absolute w-auto p-2 m-2 min-w-max left-16 rounded-md shadow-md text-white bg-gray-800 text-xs font-bold transition-all duration-100 scale-0 origin-left;
+  }
+
+  .sidebar-hr {
+    @apply dark:bg-background dark:border-primary rounded-full border mx-4 my-2;
+  }
+
+  .storycard {
+    @apply w-[95%] my-5 p-3 bg-secondary hover:bg-tertiary shadow-lg rounded-lg
+  }
+
+  .storycard * {
+    @apply m-1
+  }
+  
+  .storycard h3 {
+    @apply text-lg font-bold
+  }
+  .storycard-details {
+    @apply flex justify-end gap-5 italic
+  }
 }
