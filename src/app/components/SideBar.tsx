@@ -29,15 +29,16 @@ export default function SideBar() {
             {/* <Divider />
             <SideBarIcon icon={<IoPersonSharp size="24" />} link={'/settings'} text={'Profile'} />
             <SideBarIcon icon={<BsGearFill size="24" />} link={'/settings'} text={'Settings'} /> */}
-            <Divider />
-            <SideBarIcon icon={<GiBookCover size="24" />} link={'/stories/random'} text={'Open Story'} />
+            {/* <Divider /> */}
+            {/* <SideBarIcon icon={<GiBookCover size="24" />} link={'/stories/random'} text={'Open Story'} /> */}
         </div>
     );
 };
 
 
 const SideBarIcon = ({ icon, link, text }: { icon: any, link: string, text: string }) => (
-    <Link href={link} rel="preload">
+    // <Link href={link} rel="preload">
+    <Link href={link}>
         <div className="sidebar-icon group">
             {icon}
             <span className="sidebar-tooltip group-hover:scale-100">

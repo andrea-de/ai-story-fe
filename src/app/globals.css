@@ -72,18 +72,8 @@
     @apply dark:bg-background dark:border-primary rounded-full border mx-4 my-2;
   }
 
-  .storycard {
-    @apply w-[95%] my-5 p-3 bg-secondary hover:bg-tertiary shadow-lg rounded-lg
-  }
-
   .storycard * {
     @apply m-1
   }
   
-  .storycard h3 {
-    @apply text-lg font-bold
-  }
-  .storycard-details {
-    @apply flex justify-end gap-5 italic
-  }
 }

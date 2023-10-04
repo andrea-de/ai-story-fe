@@ -1,11 +1,9 @@
+import Api from '@/app/helper/api';
 import { redirect } from 'next/navigation'
 
-const getRandom = () => {
-    const random = Math.random()
-    return "id_" + (random*10e4).toString().substring(0,4);
-}
+const api = new Api();
 
 export default async function Random(){
-    const path = getRandom()
-    redirect(path);
+    const { tag } = await api.getRandomStory()
+    redirect(tag);
 }
