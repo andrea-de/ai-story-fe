@@ -84,7 +84,7 @@ export default function Page() {
             {story.name &&
                 <div>
                     <h2 className="text-xl font-semibold ml-5">{story.name}</h2>
-                    <div className="overflow-y-scroll max-h-[500px] mt-5 pr-3">
+                    <div className="overflow-y-scroll story-segments mt-5 pr-3">
                         <div className="bg-white/10 rounded-md p-2">
                             {story.segments != undefined &&
                                 Object.entries(story.segments).map(([position, segment]) => (

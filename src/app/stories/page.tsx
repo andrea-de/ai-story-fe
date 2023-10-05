@@ -24,9 +24,9 @@ export default async function StoriesPage({ searchParams }: { searchParams: { pa
 
 const StoriesList = async ({ stories, page = 1 }: { stories: any[], page: number }) => {
     return (
-        <div className="max-h-[80%]">
+        <div className="">
             <h1 className="text-4xl text-center mr-10">Stories</h1>
-            <div className="mb-5 overflow-y-scroll">
+            <div className="story-list overflow-y-scroll my-5" style={{ maxHeight: '65svh' }}>
                 {Object.keys(stories).length > 0 &&
                     (stories.map((story => (StoryCard(story)))))
                 }
@@ -38,7 +38,7 @@ const StoriesList = async ({ stories, page = 1 }: { stories: any[], page: number
 const StoryCard = (story: any) => (
     // <Link href={'stories/' + story.tag}>
     <Link href={'stories/' + story.tag + '/' + '0'}>
-        <div className="storycard w-[95%] my-4 p-3 pb-1 bg-secondary hover:bg-tertiary shadow-lg rounded-lg">
+        <div className="storycard max-w-[95%] my-4 p-3 pb-1 bg-secondary hover:bg-tertiary shadow-lg rounded-lg">
             <h3 className="text-lg font-bold">{story.name}</h3>
             <p className="line-clamp-2">{story.blurb}</p>
             <div className="flex justify-between items-center space-between italic">
@@ -55,8 +55,8 @@ const Review = async (props: { score: number }) => {
         <div>
             <div className="flex">
                 <span className="self-center" hidden>Score: &nbsp;&nbsp;</span>
-                {Array.from({ length: score }, () => <div className="text-accent"><GiOpenBook size="23" /></div>)}
-                {Array.from({ length: 5 - score }, () => <div className="text-primary"><GiOpenBook size="22" /></div>)}
+                {Array.from({ length: score }, () => <div className="text-accent"><GiOpenBook className="review-icon m-0"/></div>)}
+                {Array.from({ length: 5 - score }, () => <div className="text-primary"><GiOpenBook class="review-icon m-0"/></div>)}
             </div>
         </div>
     )
@@ -67,7 +67,8 @@ const Read = async (props: { read: number }) => {
     return (
         <div>
             <div className="flex">
-                <FcReading size="23" /><span>: &nbsp; {read} </span>
+                <FcReading class="review-icon"/><span>: &nbsp; {read} </span>
+                {/* <FcReading class="review-icon" size="23" /><span>: &nbsp; {read} </span> */}
             </div>
         </div>
     )

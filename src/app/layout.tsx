@@ -18,9 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className + 'flex h-screen pt-10 w-screen dark:bg-background'}>
+      <body className={inter.className + 'pt-5 w-screen dark:bg-background'}>
         <SideBar />
-        <main className='w-full h-full max-w-2xl ml-5 mt-5 flex justify-center scroll-ml-96'>
+        <main className='w-full mx-5 flex scroll-ml-96'>
           <Suspense>
             {children}
           </Suspense>

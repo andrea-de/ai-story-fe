@@ -37,29 +37,104 @@
     @apply bg-secondary border-r-8
     /* border-radius: 5px; */
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-tertiary
   }
-  
+
+  html {
+    overflow: hidden;
+    height: 100svh;
+  }
 
   body {
-    @apply flex h-screen w-screen items-start dark:text-white dark:bg-background overflow-hidden
+    height: 100svh;
+    @apply items-start mt-5 dark:text-white dark:bg-background overflow-hidden
   }
 
-  main > div {
-    @apply flex flex-col justify-start items-center w-full
+  /* main {
+    max-height: 85svh;
+    overflow: hidden;
+  } */
+
+  main>div {
+    /* @apply flex flex-col justify-start items-center w-full overflow-hidden */
   }
 
-  main > div > h1 {
+  main>div>h1 {
     text-shadow: 1px 1px 2px white;
     @apply text-4xl mr-14 mb-10 grow-0
   }
 
-  main > div > div {
+  main>div>div {
     @apply max-w-lg
   }
-  
+
+  /* Mobile */
+  @media (max-width: 800px) {
+    body {
+      height: 95svh;
+      @apply flex flex-col-reverse justify-between overflow-hidden text-xs
+    }
+
+    main {
+      max-width: 90dvw;
+      overflow: hidden
+    }
+
+    .form-options {
+      @apply flex flex-col gap-5
+    }
+
+    .review-icon {
+      font-size: 15px;
+    }
+
+    .story-segments {
+      max-height: 50svh;
+    }
+
+    .navbar {
+      /* max-height: 15svh; */
+      @apply ml-2 flex flex-row;
+    }
+
+    .sidebar-hr {
+      @apply mx-2 my-4 h-auto;
+    }
+  }
+
+  /* Wide screen */
+  @media (min-width: 800px) {
+    body {
+      @apply flex justify-start gap-10
+    }
+
+    .navbar {
+      @apply w-20 ml-2 flex-col;
+    }
+
+    .form-options {
+      @apply flex flex-row
+    }
+
+    .sidebar-hr {
+      @apply mx-4 my-2;
+    }
+
+    .review-icon {
+      font-size: 25px;
+    }
+
+    .story-list {
+      max-height: 85%;
+    }
+  }
+
+  .navbar {
+    @apply dark:bg-background;
+  }
+
   .sidebar-icon {
     @apply relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto bg-gray-400 hover:bg-primary dark:bg-gray-800 text-primary hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg;
   }
@@ -75,5 +150,5 @@
   .storycard * {
     @apply m-1
   }
-  
+
 }

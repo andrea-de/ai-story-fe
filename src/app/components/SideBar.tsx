@@ -14,13 +14,8 @@ import { GiOpenBook } from '@react-icons/all-files/gi/GiOpenBook';
 import { GiBookCover } from '@react-icons/all-files/gi/GiBookCover';
 
 export default function SideBar() {
-
-    // onfocus
-
     return (
-        <div className="w-20 ml-2 flex flex-col bg-white dark:bg-background">
-
-
+        <div className="navbar">
             <SideBarIcon icon={<GiSpellBook size="30" />} link={'/about'} text={'About'} />
             <Divider />
             <SideBarIcon icon={<IoLibrary size="28" />} link={'/stories'} text={'Stories'} />
@@ -35,15 +30,15 @@ export default function SideBar() {
     );
 };
 
-
 const SideBarIcon = ({ icon, link, text }: { icon: any, link: string, text: string }) => (
+
+
     // <Link href={link} rel="preload">
     <Link href={link}>
         <div className="sidebar-icon group">
             {icon}
-            <span className="sidebar-tooltip group-hover:scale-100">
+            <span className="sidebar-tooltip group-hover:scale-100  z-10">
                 {text}
-
             </span>
         </div>
     </Link>

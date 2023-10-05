@@ -75,7 +75,7 @@ export default function Page() {
         <div>
             <h1>New Story</h1>
             {form.creating ? <div>loading</div> :
-                <form className="w-5/6" onSubmit={handleSubmit} >
+                <form className="" onSubmit={handleSubmit} >
                     <div>
                         <label className='block my-5 font-semibold'>Description</label>
                         <textarea name="description" value={form.description} onChange={handleChange} maxLength={500}
@@ -88,14 +88,18 @@ export default function Page() {
                         <input name="tag" value={form.tag} onChange={handleChange}
                         className="ml-5 p-2 shadow-lg rounded-md bg-secondary" /> */}
 
-                        <div className='ml-5 mt-5'>
-                            <label className='font-semibold'>Parts</label>
-                            <input type="range" id="parts" name="parts" value={form.parts} onChange={handleChange} min="5" max="10" className="ml-5 accent-secondary " />
-                            <span className='ml-5 mr-10'>{form.parts}</span>
+                        <div className='form-options ml-5 mt-5'>
+                            <div className='flex'>
+                                <label className='font-semibold'>Parts</label>
+                                <input type="range" id="parts" name="parts" value={form.parts} onChange={handleChange} min="5" max="10" className="ml-5 accent-secondary " />
+                                <span className='ml-5 mr-10'>{form.parts}</span>
+                            </div>
 
-                            <label className='font-semibold'>Choices</label>
-                            <input type="range" id="choices" name="choices" value={form.choices} onChange={handleChange} min="2" max="4" className="ml-5 accent-secondary" />
-                            <span className='ml-5'>{form.choices}</span>
+                            <div className='flex'>
+                                <label className='font-semibold'>Choices</label>
+                                <input type="range" id="choices" name="choices" value={form.choices} onChange={handleChange} min="2" max="4" className="ml-5 accent-secondary" />
+                                <span className='ml-5'>{form.choices}</span>
+                            </div>
                         </div>
 
                         {/* <label className='block my-5 font-semibold'>Length</label>
