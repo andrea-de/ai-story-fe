@@ -55,8 +55,16 @@ const Review = async (props: { score: number }) => {
         <div>
             <div className="flex">
                 <span className="self-center" hidden>Score: &nbsp;&nbsp;</span>
-                {Array.from({ length: score }, () => <div className="text-accent"><GiOpenBook className="review-icon m-0"/></div>)}
-                {Array.from({ length: 5 - score }, () => <div className="text-primary"><GiOpenBook class="review-icon m-0"/></div>)}
+                {Array.from({ length: score }, (_, index) =>
+                    <div key={index} className="">
+                        <GiOpenBook className="review-icon m-0" />
+                    </div>
+                )}
+                {Array.from({ length: 5 - score }, (_, index) =>
+                    <div key={index} className="text-primary">
+                        <GiOpenBook className="review-icon m-0" />
+                    </div>
+                )}
             </div>
         </div>
     )
@@ -67,8 +75,7 @@ const Read = async (props: { read: number }) => {
     return (
         <div>
             <div className="flex">
-                <FcReading class="review-icon"/><span>: &nbsp; {read} </span>
-                {/* <FcReading class="review-icon" size="23" /><span>: &nbsp; {read} </span> */}
+                <FcReading className="review-icon" /><span>: &nbsp; {read} </span>
             </div>
         </div>
     )

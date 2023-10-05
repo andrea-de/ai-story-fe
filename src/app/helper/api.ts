@@ -9,7 +9,7 @@ export default class Api {
         // this.api_url = process.env.REACT_APP_API_ENDPOINT;
     }
 
-    URI_HEAD = "http://127.0.0.1:8000/api/";
+    URI_HEAD = process.env.API_URI + "/api/";
 
     init = () => {
         //   this.api_token = getCookie("ACCESS_TOKEN");

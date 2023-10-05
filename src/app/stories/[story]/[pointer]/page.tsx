@@ -46,8 +46,6 @@ export default function Page() {
 
     }
 
-    useLayoutEffect(() => { fetchStory(); }, []);
-
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
         window.history.pushState({}, '', story.pointer);
