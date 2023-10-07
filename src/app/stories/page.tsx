@@ -1,24 +1,39 @@
 import Link from "next/link";
-import Api from "../helper/api";
 import { Suspense } from "react";
-import { GiOpenBook } from '@react-icons/all-files/gi/GiOpenBook';
-import { FcReading } from '@react-icons/all-files/fc/FcReading';
+import StoryCard from "../components/StoryCard";
 
-const api = new Api();
+const api_url = process.env.REACT_APP_API_URI + '/api/';
 
 export default async function StoriesPage({ searchParams }: { searchParams: { page: number } }) {
-    let page: number = Number(searchParams.page) || 1;
-    const stories: any[] = await api.getStories(page); // Gets one extra for pagination
-    const prev = page > 1 ? true : false
-    const next = stories.length > 3 ? true : false
+    const page: number = Number(searchParams.page) || 1;
+    const limit = 3;
 
-    return (
+    const loadStories = async () => {
+        try {
+            const stories = await fetch(api_url + 'story?page=' + page + '&limit=' + limit + '&', { cache: 'no-store' })
+                .then(res => res.json())
+            if (stories.error) throw stories.error
+            return stories
+        } catch (error) {
+            // Error message
+            return []
+        }
+    }
+
+    const stories = await loadStories()
+
+    const prev = page > 1 ? true : false
+    const next = stories && stories.length > 3 ? true : false
+
+
+    return ((stories!=undefined && stories.length) ?
         <Suspense fallback={<p>Loading data...</p>}>
             <div className="flex-col">
                 <StoriesList page={page} stories={stories.slice(0, 3)} />
                 <Navigation page={page} prev={prev} next={next} />
             </div>
-        </Suspense>
+        </Suspense> :
+        <p>Loading data...</p>
     )
 }
 
@@ -30,52 +45,6 @@ const StoriesList = async ({ stories, page = 1 }: { stories: any[], page: number
                 {Object.keys(stories).length > 0 &&
                     (stories.map((story => (StoryCard(story)))))
                 }
-            </div>
-        </div>
-    )
-}
-
-const StoryCard = (story: any) => (
-    // <Link href={'stories/' + story.tag}>
-    <Link href={'stories/' + story.tag + '/' + '0'}>
-        <div className="storycard max-w-[95%] my-4 p-3 pb-1 bg-secondary hover:bg-tertiary shadow-lg rounded-lg">
-            <h3 className="text-lg font-bold">{story.name}</h3>
-            <p className="line-clamp-2">{story.blurb}</p>
-            <div className="flex justify-between items-center space-between italic">
-                <Read read={3} />
-                <Review score={3} />
-            </div>
-        </div>
-    </Link>
-);
-
-const Review = async (props: { score: number }) => {
-    let score = Math.round(Math.random() * 5)
-    return (
-        <div>
-            <div className="flex">
-                <span className="self-center" hidden>Score: &nbsp;&nbsp;</span>
-                {Array.from({ length: score }, (_, index) =>
-                    <div key={index} className="">
-                        <GiOpenBook className="review-icon m-0" />
-                    </div>
-                )}
-                {Array.from({ length: 5 - score }, (_, index) =>
-                    <div key={index} className="text-primary">
-                        <GiOpenBook className="review-icon m-0" />
-                    </div>
-                )}
-            </div>
-        </div>
-    )
-}
-
-const Read = async (props: { read: number }) => {
-    let read = Math.round(Math.random() * 30)
-    return (
-        <div>
-            <div className="flex">
-                <FcReading className="review-icon" /><span>: &nbsp; {read} </span>
             </div>
         </div>
     )

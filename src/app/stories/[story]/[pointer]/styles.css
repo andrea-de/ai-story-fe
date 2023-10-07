@@ -2,6 +2,19 @@
     margin: 0;
     padding: 0;
 }
+/* 
+@media (max-width: 800px) {
+    body {
+        @apply flex justify-start gap-10
+    }
+}
+
+@media (min-width: 800px) {
+    body {
+        @apply flex justify-start gap-10
+    }
+} */
+
 
 .rate {
     /* float: left; */

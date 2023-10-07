@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true
+    reactStrictMode: true,
+    // api: {
+    //     bodyParser: false,
+    //     externalResolvers: true,
+    //     basePath: '/app/api',
+    // }
 }
 
 module.exports = nextConfig

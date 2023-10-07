@@ -22,6 +22,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/stories/[story]/page.tsx.bak"],
+  "exclude": ["node_modules"],
+  "s": ["src/app/stories/new/api/generate.ts.bak", "src/app/api/generate/groute.ts.bak"]
 }

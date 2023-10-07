@@ -1,12 +1,10 @@
 "use client"
 
-import Api from '@/app/helper/api';
 import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Page() {
     const router = useRouter()
-    const api = new Api();
 
     type Create = {
         name: string,
@@ -41,8 +39,15 @@ export default function Page() {
             }));
 
             const { creating, ...requestBody } = form;
-            let response = await api.newStory(requestBody)
-            const tag = response.tag
+            const response = await fetch('api/new', {
+                cache: 'no-store',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            }).then(res => res.json());
+            const tag = response.tag;
             router.push(tag);
         } catch (error) {
             // handle error popup indiacting genration not successful
@@ -59,10 +64,12 @@ export default function Page() {
         try {
             event.preventDefault();
             toggleDisabled(prevState => !prevState);
-            const res = await api.generateDescription()
+            const response = await fetch('api/generate', { cache: 'no-store' });
+            if (!response.ok) throw new Error('Something went wrong');
+            const description = await response.json().then(res => res.description)
             setValue(prevState => ({
                 ...prevState,
-                "description": res.description
+                "description": description
             }));
             toggleDisabled(prevState => !prevState);
         } catch (error) {
