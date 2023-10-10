@@ -21,7 +21,9 @@ export default function RootLayout({
       <body className={inter.className + 'pt-5 w-screen dark:bg-background'}>
         <SideBar />
         <main className='w-full mx-5 flex scroll-ml-96'>
-          <Suspense>
+          <Suspense fallback={
+            <div className="loading font-bold mt-3">loading </div>
+          }>
             {children}
           </Suspense>
         </main>

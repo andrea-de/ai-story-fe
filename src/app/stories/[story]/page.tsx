@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useRouter, redirect, useParams } from 'next/navigation';
+import { redirect, useParams } from 'next/navigation';
 
 export default function Page() {
-    const router = useRouter()
     const params = useParams();
+    if (!params || !params.story) redirect('/');
     const tag = params.story.toString();
-    const url = 'stories/api/story'
+    const url = '/api/story/' + tag
 
     const scrollRef = useRef<HTMLDivElement>(null)
     const scroll = () => scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -17,78 +17,52 @@ export default function Page() {
         name: string
         segments: { [s: string]: string }
         choices: { [s: string]: string }
-        pointer: string // position eg 1-2-1 & value of longers segments key
-        previous: string
-        loading: boolean
     };
 
     const [loading, setLoading] = useState(true)
-    const [position, setPosition] = useState('0')
     const [story, setStory] = useState<Story | undefined>(undefined)
+    const [position, setPosition] = useState('0')
 
-    const fetchStory = async (pointer: string = position) => {
+    const loadStory = async () => {
         try {
-            const storyRequest = await fetch(`api/story?tag=${tag}&pointer=${pointer}`)
-            return storyRequest.json()
+            const storyResponse = await fetch(url + '?position=' + position)
+            if (!storyResponse.ok) throw new Error(storyResponse.statusText)
+            const loaded = await storyResponse.json()
+            setStory(loaded);
         } catch (error: any) {
+            // User Error message
             console.log(error);
-            throw error
+            redirect('/' + tag);
         }
     }
 
     const postAction = async (action: string) => {
         try {
-            const story = await fetch('api/story',
+            setLoading(true)
+            const actionResponse = await fetch(url,
                 {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        tag: tag,
-                        // position: position,
-                        // action: parseInt(action.slice(-1))
                         action: action
                     })
                 })
-            return story.json()
+            if (!actionResponse.ok) throw new Error(actionResponse.statusText)
+            if (position != action) setPosition(action)
         } catch (error) {
+            // User Error message
             console.log(error);
-            throw error
-            // Error message
+            redirect('/' + tag);
         }
     }
 
-    const updateStory = async function () {
-        await fetchStory(position)
-            .then((story) => {
-                setStory(story);
-                setLoading(false);
-            })
-            .catch((err) => { console.log(err); })
-    }
+    useLayoutEffect(() => { loadStory() }, []); // Initial Story load
+    useEffect(() => { loadStory() }, [position]) // Story loads on position change
+    useEffect(() => { setLoading(false) }, [story]) // Loaded reacts to story change
+    useEffect(() => { scroll() }, [loading]) // Scroll position on loaded
 
-    useLayoutEffect(() => {
-        updateStory()
-    }, []);
-
-    useEffect(() => { updateStory() }, [position])
-    useEffect(() => { scroll() }, [story])
-
-
-    async function continueStory(action: string) {
-        try {
-            await postAction(action);
-            setPosition(action)
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    // http://localhost:3000/stories/insane-detective-risks-truth-eclipse-disappearances/stories/api/story?tag=insane-detective-risks-truth-eclipse-disappearances&pointer=insane-detective-risks-truth-eclipse-disappearances
-
-    async function rewindStory(tag: string, pointer: string) {
-        setLoading(true)
-        const story = await fetchStory()
-        setPosition(story.position)
-        setStory(story);
-        setLoading(false)
+    async function rewindStory() {
+        const previous = position.length == 1 ? '0' : position.slice(0, -2)
+        setPosition(previous)
     }
 
     return (
@@ -111,8 +85,7 @@ export default function Page() {
                         <div className="w-[90%] ml-5">
                             {story.choices != undefined &&
                                 Object.entries(story.choices).map(([choice, choices]) => (
-                                    <button
-                                        onClick={() => continueStory(choice)} // first choice 1 not 0 
+                                    <button onClick={() => postAction(choice)} // first choice 1 not 0 
                                         className="mt-5 p-2 w-full text-left shadow-lg rounded-md bg-secondary hover:bg-tertiary" key={choice}>
                                         {choices}
                                     </button>
@@ -123,12 +96,10 @@ export default function Page() {
                                     End of Story
                                 </div>
                             }
-                            {!loading && story.previous &&
-                                <button
-                                    className="mt-5 p-2 min-w-fit bg-secondary hover:bg-tertiary"
-                                    onClick={() => rewindStory(tag, story.previous)}
-                                >
-                                    hello
+                            {position != '0' &&
+                                <button onClick={() => rewindStory()}
+                                    className="mt-6 p-2 min-w-fit bg-red-900 hover:bg-tertiary rounded-lg">
+                                    Back
                                 </button>
                             }
                         </div>

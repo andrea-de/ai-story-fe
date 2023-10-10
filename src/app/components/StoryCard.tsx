@@ -4,7 +4,7 @@ import { FcReading } from '@react-icons/all-files/fc/FcReading';
 
 export default function StoryCard(story: any) {
     return (
-        <Link href={'stories/' + story.tag + '/' + '0'}>
+        <Link href={'stories/' + story.tag}>
             <div className="storycard max-w-[95%] my-4 p-3 pb-1 bg-secondary hover:bg-tertiary shadow-lg rounded-lg">
                 <h3 className="text-lg font-bold">{story.name}</h3>
                 <p className="line-clamp-2">{story.blurb}</p>

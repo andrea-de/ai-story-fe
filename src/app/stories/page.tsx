@@ -1,8 +1,10 @@
+"use client"
+
 import Link from "next/link";
 import { Suspense } from "react";
 import StoryCard from "../components/StoryCard";
 
-const api_url = process.env.REACT_APP_API_URI + '/api/';
+const api_url = '/api/stories';
 
 export default async function StoriesPage({ searchParams }: { searchParams: { page: number } }) {
     const page: number = Number(searchParams.page) || 1;
@@ -10,11 +12,12 @@ export default async function StoriesPage({ searchParams }: { searchParams: { pa
 
     const loadStories = async () => {
         try {
-            const stories = await fetch(api_url + 'story?page=' + page + '&limit=' + limit + '&', { cache: 'no-store' })
+            const stories = await fetch(api_url + '?page=' + page + '&limit=' + limit + '&', { cache: 'no-store' })
                 .then(res => res.json())
             if (stories.error) throw stories.error
             return stories
         } catch (error) {
+            console.log(error);
             // Error message
             return []
         }
@@ -26,14 +29,14 @@ export default async function StoriesPage({ searchParams }: { searchParams: { pa
     const next = stories && stories.length > 3 ? true : false
 
 
-    return ((stories!=undefined && stories.length) ?
-        <Suspense fallback={<p>Loading data...</p>}>
+    return ((stories != undefined && stories.length) ?
+        <Suspense>
             <div className="flex-col">
                 <StoriesList page={page} stories={stories.slice(0, 3)} />
                 <Navigation page={page} prev={prev} next={next} />
             </div>
         </Suspense> :
-        <p>Loading data...</p>
+        <div className="loading font-bold mt-3">loading </div>
     )
 }
 

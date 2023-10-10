@@ -39,8 +39,7 @@ export default function Page() {
             }));
 
             const { creating, ...requestBody } = form;
-            const response = await fetch('api/new', {
-                cache: 'no-store',
+            const response = await fetch('/api/stories', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -64,7 +63,7 @@ export default function Page() {
         try {
             event.preventDefault();
             toggleDisabled(prevState => !prevState);
-            const response = await fetch('api/generate', { cache: 'no-store' });
+            const response = await fetch('/api/generate', { cache: 'no-store' });
             if (!response.ok) throw new Error('Something went wrong');
             const description = await response.json().then(res => res.description)
             setValue(prevState => ({
@@ -81,12 +80,13 @@ export default function Page() {
     return (
         <div>
             <h1>New Story</h1>
-            {form.creating ? <div>loading</div> :
+            {form.creating ? <div className="loading font-bold mt-3">loading </div> :
                 <form className="" onSubmit={handleSubmit} >
                     <div>
                         <label className='block my-5 font-semibold'>Description</label>
                         <textarea name="description" value={form.description} onChange={handleChange} maxLength={500}
-                            className="w-full h-28 max-h-52 ml-5 p-2 resize-y shadow-lg rounded-md bg-secondary"></textarea>
+                            className="w-full h-28 max-h-52 ml-5 p-2 resize-y shadow-lg rounded-md bg-secondary">
+                        </textarea>
 
                         <button onClick={handleGenerate} disabled={generateDisabled}
                             className='text-sm mt-2 ml-5 mb-3 p-2 rounded-md shadow-lg disabled:bg-gray-300 focus:outline-none bg-secondary hover:bg-tertiary'>Generate</button>
