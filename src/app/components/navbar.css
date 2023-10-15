@@ -11,6 +11,11 @@
         .navbar hr {
             @apply mx-2 my-4 h-auto;
         }
+        
+        .tooltip {
+            @apply bottom-16 origin-bottom
+        }
+        
     }
 
     /* Wide screen */
@@ -22,5 +27,10 @@
         .navbar hr {
             @apply mx-2 my-2;
         }
+
+        .tooltip {
+            @apply left-16 origin-left
+        }
+        
     }
 }

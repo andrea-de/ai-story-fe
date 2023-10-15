@@ -2,7 +2,12 @@
 
 @layer components {
 
-    .storycard * {
+    .storycard > * {
+        @apply m-1
+    }
+
+    .review-icon {
+        /* font-size: 15px; */
         @apply m-1
     }
 

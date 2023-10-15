@@ -1,0 +1,22 @@
+@tailwind components;
+
+@layer components {
+
+    .story {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .story-segments {
+        flex: 0 1 content;
+        /* @apply grow-0 h-[calc(60svh)] */
+        /* @apply grow-0 */
+    }
+    
+    .story-choices {
+        flex: 0 0 none;
+        /* @apply flex-none grow */
+    }
+
+}

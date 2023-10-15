@@ -36,15 +36,19 @@
   }
 
   ::-webkit-scrollbar {
-    @apply w-2 ml-4
+    @apply w-2
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-secondary border-r-8
-    /* border-radius: 5px; */
+    @apply bg-secondary
   }
 
   ::-webkit-scrollbar-thumb:hover {
+    @apply bg-tertiary
+  }
+  
+  ::-webkit-scrollbar-corner {
+    /* display: none; */
     @apply bg-tertiary
   }
 }

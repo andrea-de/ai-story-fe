@@ -66,9 +66,8 @@ const SideBarIcon: React.FC<SideBarIconProps> = ({ icon, link, text, selected, o
                     {icon}
                 </div>
                 <span
-                    className="absolute w-auto p-2 m-2 min-w-max left-16 rounded-md shadow-md text-xs font-bold 
-                    text-white bg-tertiary 
-                    transition-all duration-100 scale-0 origin-left z-10 sidebar-tooltip group-hover:scale-125">
+                    className="tooltip absolute w-auto p-2 m-2 min-w-max rounded-md shadow-md text-xs font-bold 
+                    text-white bg-tertiary transition-all duration-100 scale-0 z-10 group-hover:scale-125">
                     {text}
                 </span>
             </div>

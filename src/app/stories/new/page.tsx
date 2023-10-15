@@ -76,7 +76,7 @@ export default function Page() {
     return (
         !newStory.title ?
             <div>
-                <h1>New Story</h1>
+                <h1 className='text-3xl'>New Story</h1>
                 {
                     form.creating ?
                         <div className="loading font-bold mt-3">Loading</div>
@@ -95,31 +95,35 @@ export default function Page() {
                                     <div className='flex'>
                                         <label className='font-semibold'>Parts</label>
                                         <input type="range" id="parts" name="parts" value={form.parts} onChange={handleFormChange} min="4" max="7" className="ml-5 accent-secondary" />
-                                        <span className='ml-5 mr-10 font-bold'>{form.parts}</span>
+                                        <span className='ml-5 mr-10 font-bold italic'>{form.parts}</span>
                                     </div>
 
                                     <div className='flex'>
                                         <label className='font-semibold'>Choices</label>
                                         <input type="range" id="choices" name="choices" value={form.choices} onChange={handleFormChange} min="2" max="4" className="ml-5 accent-secondary" />
-                                        <span className='ml-5 font-bold'>{form.choices}</span>
+                                        <span className='ml-5 font-bold italic'>{form.choices}</span>
                                     </div>
                                 </div>
 
-                                <div className="radial-input flex gap-3 form-options ml-5 mt-10 items-center">
-                                    <span className='font-semibold mr-8'>Story Length: </span>
-                                    {['short', 'medium', 'long'].map((e, i) =>
-                                    (
-                                        <div key={i}>
-                                            <input type="radio" id={e} name="length" checked={form.length === e} onChange={handleFormChange} value={e} hidden />
-                                            <label htmlFor={e} className={`text-white w-12 h-12 bg-secondary hover:bg-white hover:text-secondary rounded-lg text-center flex justify-center items-center ${form.length === e ? 'bg-white' : ''}`}>
-                                                <ImHourGlass className={form.length === e ? 'text-secondary' : ''} size={25 + 5 * i} />
-                                            </label>
-                                        </div>
-                                    ))}
-                                    <span className='ml-8 w-10 font-semibold'>{`${form.length.charAt(0).toUpperCase()}${form.length.slice(1)}`}</span>
+                                <div className="form-options radial-input ml-5 mt-5">
+                                    <p>
+                                        <span className='font-semibold mr-8'>Story Length: </span>
+                                        <span className='mr-8 w-10 font-semibold italic'>{`${form.length.charAt(0).toUpperCase()}${form.length.slice(1)}`}</span>
+                                    </p>
+                                    <div className='flex gap-3'>
+                                        {['short', 'medium', 'long'].map((e, i) =>
+                                        (
+                                            <div key={i}>
+                                                <input type="radio" id={e} name="length" checked={form.length === e} onChange={handleFormChange} value={e} hidden />
+                                                <label htmlFor={e} className={`text-white w-10 h-10 bg-secondary hover:bg-white hover:text-secondary rounded-lg text-center flex justify-center items-center ${form.length === e ? 'bg-white' : ''}`}>
+                                                    <ImHourGlass className={form.length === e ? 'text-secondary' : ''} size={20 + 5 * i} />
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
 
-                                <input type="submit" value="Submit" className='block text-lg mt-10 p-2 rounded-md shadow-lg bg-secondary hover:bg-tertiary' ></input>
+                                <input type="submit" value="Submit" className='block text-lg mt-8 p-2 rounded-md shadow-lg bg-secondary hover:bg-tertiary' ></input>
 
                             </div>
                         </form>
@@ -127,7 +131,7 @@ export default function Page() {
             </div>
             :
             <div>
-                <dialog open className='fixed top-24 p-8 rounded-md border-4 border-white bg-background shadow-lg text-xl text-white'>
+                <dialog open className='fixed top-24 p-6 rounded-md text-lg border-4 border-white bg-background shadow-lg text-white'>
                     <span>Story Created</span> : <span>{newStory.title}</span>
                     <div className='mt-5  text-center'>
                         <div className='mt-7 font-bold'>

@@ -1,13 +1,19 @@
-/* Mobile */
-@media (max-width: 800px) {
-    .form-options {
-        @apply flex flex-col gap-5
-    }
-}
+@tailwind components;
 
-/* Wide screen */
-@media (min-width: 800px) {
-    .form-options {
-        @apply flex flex-row
+@layer components {
+
+    /* Mobile */
+    @media (max-width: 800px) {
+        .form-options {
+            @apply flex flex-col gap-5 justify-center
+        }
     }
+
+    /* Wide screen */
+    @media (min-width: 800px) {
+        .form-options {
+            @apply flex flex-row items-center
+        }
+    }
+
 }
