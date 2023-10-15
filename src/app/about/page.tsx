@@ -1,5 +1,6 @@
 export default function AboutPage() {
     const name = 'ChoiceAI';
+    
     return (
         <div>
             <h1 className="">About Page</h1>

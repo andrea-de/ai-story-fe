@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental: {
-        serverActions: true,
-    },
-    reactStrictMode: true,
+    // experimental: {
+    //     serverActions: true,
+    // },
+    // reactStrictMode: true,
     // api: {
     //     bodyParser: false,
     //     externalResolvers: true,

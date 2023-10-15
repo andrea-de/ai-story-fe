@@ -1,11 +1,12 @@
 "use client"
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { redirect, useParams } from 'next/navigation';
+import { useRouter, redirect, useParams } from 'next/navigation';
+import Loading from '@/app/components/Loading';
 
 export default function Page() {
+    const router = useRouter();
     const params = useParams();
-    if (!params || !params.story) redirect('/');
     const tag = params.story.toString();
     const url = '/api/story/' + tag
 
@@ -28,11 +29,11 @@ export default function Page() {
             const storyResponse = await fetch(url + '?position=' + position)
             if (!storyResponse.ok) throw new Error(storyResponse.statusText)
             const loaded = await storyResponse.json()
+            if (loaded.error) throw loaded.error
             setStory(loaded);
         } catch (error: any) {
-            // User Error message
-            console.log(error);
-            redirect('/' + tag);
+            alert(error.message)
+            router.push('/stories/' + tag);
         }
     }
 
@@ -48,14 +49,12 @@ export default function Page() {
                 })
             if (!actionResponse.ok) throw new Error(actionResponse.statusText)
             if (position != action) setPosition(action)
-        } catch (error) {
-            // User Error message
-            console.log(error);
-            redirect('/' + tag);
+        } catch (error: any) {
+            alert(error.message)
+            setLoading(false)
         }
     }
 
-    useLayoutEffect(() => { loadStory() }, []); // Initial Story load
     useEffect(() => { loadStory() }, [position]) // Story loads on position change
     useEffect(() => { setLoading(false) }, [story]) // Loaded reacts to story change
     useEffect(() => { scroll() }, [loading]) // Scroll position on loaded
@@ -67,11 +66,11 @@ export default function Page() {
 
     return (
         <div>
-            {story && story.name &&
+            {story && story.name ?
                 <div>
                     <h2 className="text-xl font-semibold ml-5">{story.name}</h2>
                     <div className="max-h-[calc(60svh)] overflow-y-scroll story-segments mt-5 pr-3">
-                        <div className="bg-white/10 rounded-md p-2">
+                        <div className="bg-secondary rounded-md p-2">
                             {story.segments != undefined &&
                                 Object.entries(story.segments).map(([position, segment]) => (
                                     <p className="mb-4" key={position}>{segment}</p>
@@ -81,12 +80,15 @@ export default function Page() {
                         <div ref={scrollRef}></div>
                     </div>
                     {loading ?
-                        <div className="loading font-bold mt-3">loading </div> :
+                        <div className='mt-5'>
+                            <Loading />
+                        </div>
+                        :
                         <div className="w-[90%] ml-5">
                             {story.choices != undefined &&
                                 Object.entries(story.choices).map(([choice, choices]) => (
                                     <button onClick={() => postAction(choice)} // first choice 1 not 0 
-                                        className="mt-5 p-2 w-full text-left shadow-lg rounded-md bg-secondary hover:bg-tertiary" key={choice}>
+                                        className="mt-5 p-2 w-full text-left shadow-lg rounded-md bg-tertiary hover:bg-secondary" key={choice}>
                                         {choices}
                                     </button>
                                 ))
@@ -98,14 +100,15 @@ export default function Page() {
                             }
                             {position != '0' &&
                                 <button onClick={() => rewindStory()}
-                                    className="mt-6 p-2 min-w-fit bg-red-900 hover:bg-tertiary rounded-lg">
+                                    className="mt-6 p-2 min-w-fit bg-red-400 hover:bg-secondary rounded-lg">
                                     Back
                                 </button>
                             }
                         </div>
                     }
                 </div>
-            }
+                :
+                <Loading />            }
         </div>
     )
 }

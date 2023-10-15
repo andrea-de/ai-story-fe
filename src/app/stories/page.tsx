@@ -1,33 +1,15 @@
-"use client"
-
-import Link from "next/link";
 import { Suspense } from "react";
+import { getStories } from "../helper/actions";
+import Link from "next/link";
 import StoryCard from "../components/StoryCard";
-
-const api_url = '/api/stories';
+import Loading from "../components/Loading";
 
 export default async function StoriesPage({ searchParams }: { searchParams: { page: number } }) {
     const page: number = Number(searchParams.page) || 1;
-    const limit = 3;
-
-    const loadStories = async () => {
-        try {
-            const stories = await fetch(api_url + '?page=' + page + '&limit=' + limit + '&', { cache: 'no-store' })
-                .then(res => res.json())
-            if (stories.error) throw stories.error
-            return stories
-        } catch (error) {
-            console.log(error);
-            // Error message
-            return []
-        }
-    }
-
-    const stories = await loadStories()
-
     const prev = page > 1 ? true : false
+    const limit = 3;
+    const stories = await getStories(page, limit)
     const next = stories && stories.length > 3 ? true : false
-
 
     return ((stories != undefined && stories.length) ?
         <Suspense>
@@ -36,7 +18,7 @@ export default async function StoriesPage({ searchParams }: { searchParams: { pa
                 <Navigation page={page} prev={prev} next={next} />
             </div>
         </Suspense> :
-        <div className="loading font-bold mt-3">loading </div>
+        <Loading />
     )
 }
 

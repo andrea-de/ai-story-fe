@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStory, getStoryAtPosition, postStoryAction } from '../../../helper/actions';
+import chalk from 'chalk';
 
-export async function GET(req: NextRequest, { params }: { params: { story: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { story: string } }, res: NextResponse ) {
     try {
         const tag = params.story;
         const url = new URL(req.url);
@@ -10,17 +11,19 @@ export async function GET(req: NextRequest, { params }: { params: { story: strin
         const story = position == undefined ? await getStory(tag) : await getStoryAtPosition(tag, position)
         return Response.json(story)
     } catch (error: any) {
-        throw error
+        if (error.message.includes('TagInvalid')) return NextResponse.json(null, { status: 404, statusText: error.message })
+        else return NextResponse.json(null, { status: 400, statusText: error.message })
     }
 }
 
 export async function POST(req: NextRequest, { params }: { params: { story: string } }) {
     try {
+        // waitUntil
         const tag = params.story;
         const body = await req.json()
-        await postStoryAction(tag, body.action, true)
+        const response = await postStoryAction(tag, body.action, true)
         return new Response('ok')
     } catch (error: any) {
-        throw error
+        return NextResponse.json(null, { status: 400, statusText: error.message })
     }
 }

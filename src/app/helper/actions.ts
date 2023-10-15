@@ -1,7 +1,7 @@
 import { ChatGPTClient } from "@/app/helper/openai";
 import { Story } from './connection';
 import { calcEnding, checkTree } from './storyHelper'
-import logger from './logger';
+import logger from "./logger";
 
 export const getStories = async (page: number, limit: number) => {
     const skip = (page - 1) * limit;
@@ -17,7 +17,7 @@ export const getStory = async (tag: string) => {
 
 export const getStoryAtPosition = async (tag: string, position: string) => {
     const story: any = await Story.findOne({ tag })
-    if (!story) return { error: { name: 'TagInvalid', message: tag + ' not found' } };
+    if (!story) throw new Error('TagInvalid: ' + tag + ' not found');
 
     const positions = position.split('-').map(p => parseInt(p))
     const nextPositionExists = story.segments.hasOwnProperty(position)
@@ -34,8 +34,32 @@ export const getStoryAtPosition = async (tag: string, position: string) => {
     }
 }
 
+export const randomStory = async (): Promise<string> => {
+    const randomStoryTagObject: { tag: string }[] = await Story.aggregate([
+        { $sample: { size: 1 } },
+        { $project: { _id: 0, tag: 1 } }
+    ]);
+    return randomStoryTagObject[0].tag;
+}
+
+
 export const createStory = async (description: string, parts: number, numChoices: number) => {
-    const [title, tag, segment, choices] = await ChatGPTClient.newStory(description, numChoices);
+    const [title, tag] = await ChatGPTClient.newStory(description);
+
+    const existing = await Story.findOne({ tag });
+    if (existing) throw new Error('Request Error: Story already exists with tag: ' + tag)
+
+    newStory(tag, title, description, parts, numChoices) // async task
+
+    return {
+        tag: tag,
+        title: title
+    }
+
+}
+
+const newStory = async (tag: string, title: string, description: string, parts: number, numChoices: number) => {
+    const [segment, choices] = await ChatGPTClient.startStory(description, numChoices);
     const blurb = description; // should be received from ai
 
     const segmentsDict = { "0": segment }
@@ -43,10 +67,6 @@ export const createStory = async (description: string, parts: number, numChoices
         obj[(index + 1).toString()] = choice;
         return obj;
     }, {} as { [key: string]: string });
-
-
-    const existing = await Story.findOne({ tag });
-    if (existing) throw new Error('Request Error: Story already exists with tag: ' + tag)
 
     // Persist Story
     const story = new Story({
@@ -60,19 +80,18 @@ export const createStory = async (description: string, parts: number, numChoices
         choices: choicesDict,
         segments: segmentsDict
     });
-    await story.save();
-    let result = {
-        tag: story.tag,
-        segments: story.segmentsDict,
-        choices: story.choicesDict
+    try {
+        await story.save();
+        logger.info('New Story Saved: ' + tag)       
+    } catch (error) {
+        logger.error('Error Saving New Story: ' + tag, error)       
     }
-    return result;
 }
 
 export const postStoryAction = async (tag: string, actionString: string, write = false, overwrite = false) => {
     const actions: number[] = actionString.split('-').map(p => parseInt(p)) // [1,2,1]
-    const position: number[] = actions.length > 1 ? actions.slice(0,-1) : [0] // [1,2]
-    const action: number = actions.length > 1 ? actions.slice(-1)[0]: actions[0] // 1
+    const position: number[] = actions.length > 1 ? actions.slice(0, -1) : [0] // [1,2]
+    const action: number = actions.length > 1 ? actions.slice(-1)[0] : actions[0] // 1
 
     // Validate Story
     const story = await Story.findOne({ tag: tag })
