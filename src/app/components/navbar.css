@@ -1,0 +1,26 @@
+@tailwind components;
+
+@layer components {
+
+    /* Mobile */
+    @media (max-width: 800px) {
+        .navbar {
+            @apply w-full mb-4 flex flex-row gap-3 justify-center;
+        }
+
+        .navbar hr {
+            @apply mx-2 my-4 h-auto;
+        }
+    }
+
+    /* Wide screen */
+    @media (min-width: 800px) {
+        .navbar {
+            @apply mt-4 mx-4 flex flex-col gap-1;
+        }
+
+        .navbar hr {
+            @apply mx-2 my-2;
+        }
+    }
+}

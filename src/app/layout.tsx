@@ -1,7 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import SideBar from './components/SideBar'
+import NavBar from './components/NavBar'
 import { Suspense } from 'react'
 import Loading from './components/Loading'
 
@@ -19,9 +19,9 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className={inter.className + 'pt-5 w-screen dark:bg-background'}>
-                <SideBar />
-                <main className='w-full mx-5 flex scroll-ml-96'>
+            <body className={inter.className + 'w-screen overflow-hidden text-white bg-background'}>
+                <NavBar />
+                <main className='grow flex justify-center pt-8 overflow-hidden'>
                     <Suspense fallback={<Loading />}>
                         {children}
                     </Suspense>

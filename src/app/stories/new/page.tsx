@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ImHourGlass } from '@react-icons/all-files/im/ImHourGlass';
 import { useState } from 'react';
 import Loading from '@/app/components/Loading';
+import './new.css'
 
 export default function Page() {
     const [form, setValue] = useState({

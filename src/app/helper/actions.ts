@@ -122,6 +122,15 @@ export const postStoryAction = async (tag: string, actionString: string, write =
         throw new Error('ReadonlyError')
     }
 
+    continueStory(story, actions)
+
+    return {
+        generated: true
+    }
+
+}
+
+const continueStory = async (story: any, actions: number[]) => {
     /* MUTATES STORY */ // Needs to confirm authorization for story writing/overwriting
     const storyAtPositionDict = await (story as any).getStoryAtPosition(actions)
     const storyAtPosition: string[] = Object.values(storyAtPositionDict)

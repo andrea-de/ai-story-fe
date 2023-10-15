@@ -15,8 +15,9 @@ import { GiBookCover } from '@react-icons/all-files/gi/GiBookCover';
 import Link from "next/link";
 import { useState } from "react";
 import { MouseEventHandler } from 'react';
+import './navbar.css'
 
-export default function SideBar() {
+export default function NavBar() {
     const [selected, setSelected] = useState('')
 
     const navAction = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
@@ -79,7 +80,7 @@ const SideBarIconServer = ({ icon, link, text }: { icon: any, link: string, text
     <Link href={link} rel="preload">
         {/* <Link href={link}> */}
         <div
-            className=" relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto bg-secondary hover:bg-tertiary text-white hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg">
+            className="relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto bg-secondary hover:bg-tertiary text-white hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg">
             {icon}
             <span className="absolute w-auto p-2 m-2 min-w-max left-16 rounded-md shadow-md text-white bg-background text-xs font-bold transition-all duration-100 scale-0 origin-left group-hover:scale-100 z-10">
                 {text}
@@ -88,4 +89,4 @@ const SideBarIconServer = ({ icon, link, text }: { icon: any, link: string, text
     </Link>
 );
 
-const Divider = () => <hr className="border-secondary rounded-full border-2 side-bar" />;
+const Divider = () => <hr className="border-secondary rounded-full border-2" />;

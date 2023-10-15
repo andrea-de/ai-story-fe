@@ -16,13 +16,13 @@ export async function GET(req: NextRequest, { params }: { params: { story: strin
     }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { story: string } }) {
+export async function POST(req: NextRequest, { params }: { params: { story: string } }, res: NextResponse) {
     try {
         // waitUntil
         const tag = params.story;
         const body = await req.json()
         const response = await postStoryAction(tag, body.action, true)
-        return new Response('ok')
+        return NextResponse.json(response)
     } catch (error: any) {
         return NextResponse.json(null, { status: 400, statusText: error.message })
     }

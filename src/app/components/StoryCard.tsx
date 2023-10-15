@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GiOpenBook } from '@react-icons/all-files/gi/GiOpenBook';
 import { FcReading } from '@react-icons/all-files/fc/FcReading';
+import './storycard.css'
 
 export default function StoryCard(story: any) {
     return (
@@ -25,12 +26,12 @@ const Review = async (props: { score: number }) => {
                 <span className="self-center" hidden>Score: &nbsp;&nbsp;</span>
                 {Array.from({ length: score }, (_, index) =>
                     <div key={index} className="">
-                        <GiOpenBook className="review-icon m-0" />
+                        <GiOpenBook className="review-icon" />
                     </div>
                 )}
                 {Array.from({ length: 5 - score }, (_, index) =>
                     <div key={index} className="text-primary">
-                        <GiOpenBook className="review-icon m-0" />
+                        <GiOpenBook className="review-icon" />
                     </div>
                 )}
             </div>

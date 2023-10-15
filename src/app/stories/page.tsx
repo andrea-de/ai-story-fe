@@ -12,32 +12,29 @@ export default async function StoriesPage({ searchParams }: { searchParams: { pa
     const next = stories && stories.length > 3 ? true : false
 
     return ((stories != undefined && stories.length) ?
-        <Suspense>
-            <div className="flex-col">
-                <StoriesList page={page} stories={stories.slice(0, 3)} />
-                <Navigation page={page} prev={prev} next={next} />
-            </div>
-        </Suspense> :
+        <div className="flex-col max-w-2xl mx-10 h-full">
+            <h1 className="text-4xl text-center mr-10">Stories</h1>
+            <StoriesList page={page} stories={stories.slice(0, 3)} />
+            <Navigation page={page} prev={prev} next={next} />
+        </div>
+        :
         <Loading />
     )
 }
 
 const StoriesList = async ({ stories, page = 1 }: { stories: any[], page: number }) => {
     return (
-        <div className="">
-            <h1 className="text-4xl text-center mr-10">Stories</h1>
-            <div className="story-list overflow-y-scroll my-5" style={{ maxHeight: '65svh' }}>
-                {Object.keys(stories).length > 0 &&
-                    (stories.map((story => (StoryCard(story)))))
-                }
-            </div>
+        <div className="grow shrink-0 max-h-[80%] story-list overflow-y-scroll my-5">
+            {Object.keys(stories).length > 0 &&
+                (stories.map((story => (StoryCard(story)))))
+            }
         </div>
     )
 }
 
 const Navigation = async ({ page = 1, prev, next }: { page: number, prev: boolean, next: boolean }) => {
     return (
-        <div className="w-full flex justify-between pr-5">
+        <div className="w-full basis-4 flex justify-around max-w-[95%]">
             <Link
                 className={`px-5 py-2 rounded-md + ${prev ? "bg-secondary" : "bg-gray-700"}`}
                 style={{ pointerEvents: prev ? undefined : 'none' }}

@@ -23,15 +23,18 @@ export default function Page() {
     const [loading, setLoading] = useState(true)
     const [story, setStory] = useState<Story | undefined>(undefined)
     const [position, setPosition] = useState('0')
+    const [action, setAction] = useState('')
 
-    const loadStory = async () => {
+    const loadStory = async (attempts: number = 0) => {
         try {
+            if (attempts) await new Promise(res => { setTimeout(res, 2500) })
             const storyResponse = await fetch(url + '?position=' + position)
             if (!storyResponse.ok) throw new Error(storyResponse.statusText)
             const loaded = await storyResponse.json()
             if (loaded.error) throw loaded.error
             setStory(loaded);
         } catch (error: any) {
+            if (!attempts && attempts < 3) loadStory(attempts+1)
             alert(error.message)
             router.push('/stories/' + tag);
         }
@@ -39,6 +42,7 @@ export default function Page() {
 
     const postAction = async (action: string) => {
         try {
+            setAction(action)
             setLoading(true)
             const actionResponse = await fetch(url,
                 {
@@ -48,7 +52,9 @@ export default function Page() {
                     })
                 })
             if (!actionResponse.ok) throw new Error(actionResponse.statusText)
-            if (position != action) setPosition(action)
+            const { generated } = await actionResponse.json()
+            if (generated) setTimeout(()=>setPosition(action), 15000)
+            else setPosition(action)
         } catch (error: any) {
             alert(error.message)
             setLoading(false)
@@ -65,7 +71,7 @@ export default function Page() {
     }
 
     return (
-        <div>
+        <div className='max-w-3xl max-w-[80%]'>
             {story && story.name ?
                 <div>
                     <h2 className="text-xl font-semibold ml-5">{story.name}</h2>
@@ -80,7 +86,10 @@ export default function Page() {
                         <div ref={scrollRef}></div>
                     </div>
                     {loading ?
-                        <div className='mt-5'>
+                        <div className='w-[90%] ml-5'>
+                            <div className="my-5 p-2 w-full text-left shadow-lg rounded-md bg-secondary">
+                                {story.choices[action]}
+                            </div>
                             <Loading />
                         </div>
                         :
@@ -108,7 +117,7 @@ export default function Page() {
                     }
                 </div>
                 :
-                <Loading />            }
+                <Loading />}
         </div>
     )
 }

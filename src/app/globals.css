@@ -2,32 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-*/
-
-/* body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
-} */
-
-
 @layer components {
+
+  html {
+    overflow: hidden;
+    height: 100svh;
+  }
+
+  body {
+    height: 100svh;
+  }
+
+  h1 {
+    text-shadow: 1px 1px 2px white;
+  }
+
+  /* Mobile */
+  @media (max-width: 800px) {
+
+    body {
+      @apply flex flex-col-reverse justify-between text-xs
+    }
+
+  }
+
+  /* Wide screen */
+  @media (min-width: 800px) {
+
+    body {
+      @apply flex justify-start
+    }
+
+  }
 
   ::-webkit-scrollbar {
     @apply w-2 ml-4
@@ -41,138 +47,4 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-tertiary
   }
-
-  html {
-    overflow: hidden;
-    height: 100svh;
-  }
-
-  body {
-    height: 100svh;
-    @apply items-start mt-5 dark:text-white dark:bg-background overflow-hidden
-  }
-
-  /* main {
-    max-height: 85svh;
-    overflow: hidden;
-  } */
-
-  main>div {
-    /* @apply flex flex-col justify-start items-center w-full overflow-hidden */
-  }
-
-  main>div>h1 {
-    text-shadow: 1px 1px 2px white;
-    @apply text-4xl mr-14 mb-10 grow-0
-  }
-
-  main>div>div {
-    @apply max-w-lg
-  }
-
-  /* Mobile */
-  @media (max-width: 800px) {
-    body {
-      height: 95svh;
-      @apply flex flex-col-reverse justify-between overflow-hidden text-xs
-    }
-
-    main {
-      max-width: 90dvw;
-      overflow: hidden
-    }
-
-    .form-options {
-      @apply flex flex-col gap-5
-    }
-
-    .review-icon {
-      font-size: 15px;
-    }
-
-    .story-segments {
-      max-height: 50svh;
-    }
-
-    .navbar {
-      /* max-height: 15svh; */
-      @apply ml-2 flex flex-row;
-    }
-
-    .sidebar-hr {
-      @apply mx-2 my-4 h-auto;
-    }
-  }
-
-  /* Wide screen */
-  @media (min-width: 800px) {
-    body {
-      @apply flex justify-start gap-10
-    }
-
-    .navbar {
-      @apply w-20 ml-2 flex-col;
-    }
-
-    .form-options {
-      @apply flex flex-row
-    }
-
-    .sidebar-hr {
-      @apply mx-4 my-2;
-    }
-
-    .review-icon {
-      font-size: 25px;
-    }
-
-    .story-list {
-      max-height: 85%;
-    }
-  }
-
-  .navbar {
-    @apply dark:bg-background;
-  }
-
-  /* .sidebar-tooltip {
-    @apply absolute w-auto p-2 m-2 min-w-max left-16 rounded-md shadow-md text-white bg-gray-800 text-xs font-bold transition-all duration-100 scale-0 origin-left;
-  } */
-
-  /* .sidebar-hr {
-    @apply dark:bg-background dark:border-primary rounded-full border mx-4 my-2;
-  } */
-
-  .storycard * {
-    @apply m-1
-  }
-
 }
-
-.loading {
-  @apply font-bold
-}
-
-.loading:after {
-  content: ' .';
-  animation: dots 1s steps(5, end) infinite;}
-
-@keyframes dots {
-  0%, 20% {
-    color: rgba(0,0,0,0);
-    text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
-  40% {
-    color: white;
-    text-shadow:
-      .25em 0 0 rgba(0,0,0,0),
-      .5em 0 0 rgba(0,0,0,0);}
-  60% {
-    text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 rgba(0,0,0,0);}
-  80%, 100% {
-    text-shadow:
-      .25em 0 0 white,
-      .5em 0 0 white;}}

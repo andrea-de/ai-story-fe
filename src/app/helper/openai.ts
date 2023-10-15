@@ -63,7 +63,7 @@ class Chat {
 export class ChatGPTClient {
 
     static async generateDescription(): Promise<string> {
-        const descriptionMessage = "Write a very random very short description about for a fictional story in 2nd person narrative. Any random theme and audience. Two sentences maximum."
+        const descriptionMessage = "Write a very random very short description about for a fictional story in 2nd person narrative. Any random theme and audience. Two sentences and 20 words maximum."
         const chat = new Chat()
         const segment = await chat.send(descriptionMessage, 1.1)
         chat.logTokensUsed('description')
@@ -84,7 +84,7 @@ export class ChatGPTClient {
     }
 
     private static async generateIntroduction(description: string): Promise<string> {
-        const segmentMessage = "Write a beggining of a story in 2nd person narrative that eloborates on the following story: \n\n" + description + " \n\nThe output should be about 80 words long and the time frame of the story events should be immediate."
+        const segmentMessage = "Write a beggining of a story in 2nd person narrative that eloborates on the following story: \n\n" + description + " \n\nThe output should be about 40 words long and the time frame of the story events should be immediate."
 
         const chat = new Chat()
         const segment = await chat.send(segmentMessage)
@@ -96,8 +96,8 @@ export class ChatGPTClient {
 
     private static async generateChoices(segments: string[], numChoices: number): Promise<string[]> {
         const story = segments.join('\n\n')
-        const initialChoiceMessage = "In one brief sentence no more than 10 words, describe a simple action in 2nd person narrative that would continue the following story: \n" + story + "\n\n  The sentence should start with you"
-        const additionalChoiceMessage = "In one brief sentence no more than 10 words, describe a completely different simple action in 2nd person narrative to continue the story. The sentence should start with you"
+        const initialChoiceMessage = "In one brief sentence no more than 6 words, describe a simple action in 2nd person narrative that would continue the following story: \n" + story + "\n\n  The sentence should start with you"
+        const additionalChoiceMessage = "In one brief sentence no more than 6 words, describe a completely different simple action in 2nd person narrative to continue the story. The sentence should start with you"
 
         const choices = []
         const chat = new Chat()
@@ -117,7 +117,7 @@ export class ChatGPTClient {
         }
 
         const story = segments.join('\n\n')
-        const nextSegmentMessage = story + "\n\n" + "Given the following action, please provide one paragraph of about 60 words which describes the next segment that continues this story:" + "\n\n" + choice
+        const nextSegmentMessage = story + "\n\n" + "Given the following action, please provide one paragraph of about 30 words which describes the next segment that continues this story:" + "\n\n" + choice
 
         const chat = new Chat()
         const nextSegment = await chat.send(nextSegmentMessage)
@@ -129,7 +129,7 @@ export class ChatGPTClient {
 
     private static async generateEnding(segments: string[], choice: string): Promise<string> {
         const story = segments.join('\n\n')
-        const endingMessage = story + "\n\n" + "Given the following action, please provide one paragraph of about 60 words which describes an ending to this story:" + "\n\n" + choice
+        const endingMessage = story + "\n\n" + "Given the following action, please provide one paragraph of about 30 words which describes an ending to this story:" + "\n\n" + choice
 
         const chat = new Chat()
         const ending = await chat.send(endingMessage)
