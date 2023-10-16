@@ -145,8 +145,6 @@ const continueStory = async (story: any, actions: number[]) => {
         await (story as any).updateChoices(actions, newChoices) : // Insert Choices
         await (story as any).updateChoices(actions, Array.from({ length: story.choicesLength }).fill(null)) // Insert null choices indicating ending
     
-    console.log('newChoicesDict: ', newChoicesDict);
-
     // story.markModified('segments'); SAFER
     await Story.updateOne({ _id: story.id }, { $set: story.toJSON() });
 

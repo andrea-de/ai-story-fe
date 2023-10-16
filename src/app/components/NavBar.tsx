@@ -55,6 +55,7 @@ const SideBarIcon: React.FC<SideBarIconProps> = ({ icon, link, text, selected, o
     const isSelected = selected === id
 
     return (
+        // <Link href={link}>
         <Link href={link} rel="preload">
             <div id={id}
                 onClick={onMouseClick}
@@ -76,8 +77,8 @@ const SideBarIcon: React.FC<SideBarIconProps> = ({ icon, link, text, selected, o
 };
 
 const SideBarIconServer = ({ icon, link, text }: { icon: any, link: string, text: string }) => (
-    <Link href={link} rel="preload">
-        {/* <Link href={link}> */}
+    // <Link href={link} rel="preload">
+    <Link href={link}>
         <div
             className="relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto bg-secondary hover:bg-tertiary text-white hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg">
             {icon}

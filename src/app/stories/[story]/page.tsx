@@ -21,7 +21,7 @@ export default function Page() {
         choices: { [s: string]: string }
     };
 
-    const [loading, setLoading] = useState(true)
+    const [loadingState, setLoading] = useState('loaded')
     const [story, setStory] = useState<Story | undefined>(undefined)
     const [position, setPosition] = useState('0')
     const [action, setAction] = useState('')
@@ -36,7 +36,7 @@ export default function Page() {
             if (loaded.error) throw loaded.error
             setStory(loaded);
         } catch (error: any) {
-            if (!attempts && attempts < 3) loadStory(attempts+1)
+            if (!attempts && attempts < 3) await loadStory(attempts+1)
             alert(error.message)
             router.push('/stories/' + tag);
         }
@@ -45,7 +45,7 @@ export default function Page() {
     const postAction = async (action: string) => {
         try {
             setAction(action)
-            setLoading(true)
+            setLoading('Loading')
             const actionResponse = await fetch(url,
                 {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -54,18 +54,22 @@ export default function Page() {
                     })
                 })
             if (!actionResponse.ok) throw new Error(actionResponse.statusText)
-            const { generated } = await actionResponse.json()
-            if (generated) setTimeout(()=>setPosition(action), 15000)
+            const { generated } = await actionResponse.json() 
+            if (generated) {
+                console.log('Story Generating in Server');
+                setLoading('Generating')
+                setTimeout(()=>setPosition(action), 15000)
+            }
             else setPosition(action)
         } catch (error: any) {
             alert(error.message)
-            setLoading(false)
+            setLoading('Loaded')
         }
     }
 
     useEffect(() => { loadStory() }, [position]) // Story loads on position change
-    useEffect(() => { setLoading(false) }, [story]) // Loaded reacts to story change
-    useEffect(() => { scroll() }, [loading]) // Scroll position on loaded
+    useEffect(() => { setLoading('Loaded') }, [story]) // Loaded reacts to story change
+    useEffect(() => { scroll() }, [loadingState]) // Scroll position on loaded
 
     async function rewindStory() {
         const previous = position.length == 1 ? '0' : position.slice(0, -2)
@@ -87,12 +91,12 @@ export default function Page() {
                         </div>
                         <div ref={scrollRef}></div>
                     </div>
-                    {loading ?
+                    {loadingState != 'Loaded' ?
                         <div className='story-choices mr-5 mb-5'>
                             <div className="my-5 p-2 w-full text-left shadow-lg rounded-md bg-secondary">
                                 {story.choices[action]}
                             </div>
-                            <Loading />
+                            <Loading text={loadingState}/>
                         </div>
                         :
                         <div className="story-choices mr-5 mb-5">

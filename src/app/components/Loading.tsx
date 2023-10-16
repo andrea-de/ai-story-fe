@@ -1,7 +1,12 @@
+import React from 'react'
 import './loading.css'
 
-export default function Loading() {
+interface LoadingProps {
+    text?: string;
+}
+
+export default function Loading({ text = 'Loading' }: LoadingProps) {
     return (
-        <span className="loading p-3 ">Loading </span>
-    )
+        <span className="loading p-3 ">{text} </span>
+    );
 }
