@@ -12,9 +12,11 @@ class Chat {
 
     stack: { role: string, content: string }[] = [];
     tokens: number
+    timer: Date
 
     constructor() {
         this.tokens = 0
+        this.timer = new Date()
     }
 
     last = () => this.stack[this.stack.length - 1].content;
@@ -49,13 +51,12 @@ class Chat {
         this.stack.push(newMessage)
     }
 
-    logTokensUsed = (task?: string) => {
+    logAPIMetrics = (task?: string) => {
         const taskMessage = !task ? '' : ` (${task})`
-        if (this.tokens <= 200) logger.debug(chalk.bold.greenBright('Tokens Used: ' + this.tokens) + taskMessage + '\n');
-        else if (this.tokens <= 500) logger.debug(chalk.bold.redBright('Tokens Used: ' + this.tokens) + taskMessage + '\n');
-        else { logger.debug(chalk.bold.bgRedBright('Tokens Used: ' + this.tokens) + taskMessage + '\n'); }
-        // Object.values(this.stack, (v) => { logger.warn(v) })
-        // this.stack.forEach((v) => console.log(v))
+        const timer = ` ${(((new Date()).getTime() - this.timer.getTime()) / 1000).toFixed(1)} seconds`
+        if (this.tokens <= 200) logger.debug(chalk.bold.greenBright('Tokens Used: ' + this.tokens) + taskMessage + timer + '\n');
+        else if (this.tokens <= 500) logger.debug(chalk.bold.redBright('Tokens Used: ' + this.tokens) + taskMessage + timer + '\n');
+        else { logger.debug(chalk.bold.bgRedBright('Tokens Used: ' + this.tokens) + taskMessage + timer + '\n'); }
     }
 
 }
@@ -66,7 +67,7 @@ export class ChatGPTClient {
         const descriptionMessage = "Write a very random very short description about for a fictional story in 2nd person narrative. Any random theme and audience. Two sentences and 20 words maximum."
         const chat = new Chat()
         const segment = await chat.send(descriptionMessage, 1.1)
-        chat.logTokensUsed('description')
+        chat.logAPIMetrics('description')
 
         return segment
     }
@@ -78,7 +79,7 @@ export class ChatGPTClient {
         const chat = new Chat()
         const title = await chat.send(titleMesage)
         const tag = await chat.send(tagMessage)
-        chat.logTokensUsed('title and tag')
+        chat.logAPIMetrics('title and tag')
 
         return [title.replaceAll('"', ''), tag]
     }
@@ -88,7 +89,7 @@ export class ChatGPTClient {
 
         const chat = new Chat()
         const segment = await chat.send(segmentMessage)
-        chat.logTokensUsed('introduction')
+        chat.logAPIMetrics('introduction')
 
         return segment
     }
@@ -105,7 +106,7 @@ export class ChatGPTClient {
         for (let i = 1; i < numChoices; i++) {
             choices.push(await chat.send(additionalChoiceMessage))
         }
-        chat.logTokensUsed('choices')
+        chat.logAPIMetrics('choices')
 
         return choices
     }
@@ -121,7 +122,7 @@ export class ChatGPTClient {
 
         const chat = new Chat()
         const nextSegment = await chat.send(nextSegmentMessage)
-        chat.logTokensUsed('segment')
+        chat.logAPIMetrics('segment')
         const nextChoices = await this.generateChoices([...segments, nextSegment], numChoices)
 
         return [nextSegment, nextChoices]
@@ -133,7 +134,7 @@ export class ChatGPTClient {
 
         const chat = new Chat()
         const ending = await chat.send(endingMessage)
-        chat.logTokensUsed('ending')
+        chat.logAPIMetrics('ending')
 
         return ending
     }

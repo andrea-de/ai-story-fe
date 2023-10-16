@@ -6,16 +6,22 @@ import { useEffect, useState } from 'react';
 
 export default function Page() {
     const router = useRouter()
-    const [story, setStory] = useState('');
+    // const [story, setStory] = useState('');
 
     const random = async () => {
-        const result = await fetch('/api/random').then(res => res.json())
-        setStory(result);
-        router.push('/stories/' + result);
+        return await fetch('/api/random').then(res => res.json())
+    }
+    
+    const redirect = async () => {
+        const story = await random()
+        // const nextStory = await random()
+        // setStory(nextStory);
+        console.log('Navigating to story: ', story);
+        router.push('/stories/' + story);
     }
 
     useEffect(() => { 
-        random(); 
+        redirect()
     }, [])
 
     return (

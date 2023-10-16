@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useRouter, redirect, useParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import Loading from '@/app/components/Loading';
 import './story.css'
 
@@ -28,7 +28,7 @@ export default function Page() {
 
     const loadStory = async (attempts: number = 0) => {
         try {
-            if (attempts) await new Promise(res => { setTimeout(res, 2500) })
+            if (attempts) await new Promise(res => { setTimeout(res, 5000) })
             const storyResponse = await fetch(url + '?position=' + position)
             // const storyResponse = await fetch(url + '?position=' + '1-1-1-1-1')
             if (!storyResponse.ok) throw new Error(storyResponse.statusText)
@@ -36,9 +36,9 @@ export default function Page() {
             if (loaded.error) throw loaded.error
             setStory(loaded);
         } catch (error: any) {
-            if (!attempts && attempts < 3) await loadStory(attempts+1)
-            alert(error.message)
-            router.push('/stories/' + tag);
+            if (attempts > 0) await loadStory(attempts - 1)
+            console.error('Error loading story' + error.message)
+            rewindStory()
         }
     }
 
@@ -54,20 +54,22 @@ export default function Page() {
                     })
                 })
             if (!actionResponse.ok) throw new Error(actionResponse.statusText)
-            const { generated } = await actionResponse.json() 
+            const { generated } = await actionResponse.json()
             if (generated) {
                 console.log('Story Generating in Server');
                 setLoading('Generating')
-                setTimeout(()=>setPosition(action), 15000)
+                setTimeout(() => setPosition(action), 15000)
             }
             else setPosition(action)
         } catch (error: any) {
-            alert(error.message)
-            setLoading('Loaded')
+            console.error('Error posting action' + error.message)
         }
     }
 
-    useEffect(() => { loadStory() }, [position]) // Story loads on position change
+    useEffect(() => {
+        if (loadingState != 'Generating') loadStory()
+        else loadStory()
+    }, [position]) // Story loads on position change
     useEffect(() => { setLoading('Loaded') }, [story]) // Loaded reacts to story change
     useEffect(() => { scroll() }, [loadingState]) // Scroll position on loaded
 
@@ -91,14 +93,7 @@ export default function Page() {
                         </div>
                         <div ref={scrollRef}></div>
                     </div>
-                    {loadingState != 'Loaded' ?
-                        <div className='story-choices mr-5 mb-5'>
-                            <div className="my-5 p-2 w-full text-left shadow-lg rounded-md bg-secondary">
-                                {story.choices[action]}
-                            </div>
-                            <Loading text={loadingState}/>
-                        </div>
-                        :
+                    {loadingState == 'Loaded' ?
                         <div className="story-choices mr-5 mb-5">
                             {story.choices != undefined &&
                                 Object.entries(story.choices).map(([choice, choices]) => (
@@ -110,7 +105,7 @@ export default function Page() {
                             }
                             {JSON.stringify(story.choices) === JSON.stringify({}) &&
                                 <div className="mt-5 p-2 w-full text-left shadow-lg rounded-md bg-secondary">
-                                    End of Story
+                                    The End
                                 </div>
                             }
                             {position != '0' &&
@@ -119,6 +114,13 @@ export default function Page() {
                                     Back
                                 </button>
                             }
+                        </div>
+                        :
+                        <div className='story-choices mr-5 mb-5'>
+                            <div className="my-5 p-2 w-full text-left shadow-lg rounded-md bg-secondary">
+                                {story.choices[action]}
+                            </div>
+                            <Loading text={loadingState} />
                         </div>
                     }
                 </div>

@@ -20,11 +20,12 @@ export const getStoryAtPosition = async (tag: string, position: string) => {
     if (!story) throw new Error('TagInvalid: ' + tag + ' not found');
 
     const positions = position.split('-').map(p => parseInt(p))
-    const nextPositionExists = story.segments.hasOwnProperty(position)
-    if (!nextPositionExists) throw new Error('PositionInvalid');
+    const positionExists = story.segments.hasOwnProperty(position)
+    if (!positionExists) throw new Error('PositionInvalid');
 
     const segments = await (story as any).getStoryAtPosition([...positions]);
-    const choices = await (story as any).getChoices([...positions]);
+    let choices = await (story as any).getChoices([...positions]);
+    if (Object.values(choices).every(value => value === null)) choices = {}
 
     return {
         name: story.name,
@@ -82,9 +83,9 @@ const newStory = async (tag: string, title: string, description: string, parts: 
     });
     try {
         await story.save();
-        logger.info('New Story Saved: ' + tag)       
+        logger.info('New Story Saved: ' + tag)
     } catch (error) {
-        logger.error('Error Saving New Story: ' + tag, error)       
+        logger.error('Error Saving New Story: ' + tag, error)
     }
 }
 
@@ -122,7 +123,9 @@ export const postStoryAction = async (tag: string, actionString: string, write =
         throw new Error('ReadonlyError')
     }
 
+    /* MUTATES STORY */ // Needs to confirm authorization for story writing/overwriting
     continueStory(story, actions)
+    console.log('continue story?');
 
     return {
         generated: true
@@ -131,28 +134,24 @@ export const postStoryAction = async (tag: string, actionString: string, write =
 }
 
 const continueStory = async (story: any, actions: number[]) => {
-    /* MUTATES STORY */ // Needs to confirm authorization for story writing/overwriting
-    const storyAtPositionDict = await (story as any).getStoryAtPosition(actions)
-    const storyAtPosition: string[] = Object.values(storyAtPositionDict)
+    try {
+        console.log('continue story?');
+        const storyAtPositionDict = await (story as any).getStoryAtPosition(actions)
+        const storyAtPosition: string[] = Object.values(storyAtPositionDict)
 
-    const choice = await (story as any).getChoice(actions)
-    const isEnding = calcEnding(actions.length, story.storyLengthMin, story.storyLengthMax)
-    const [newSegment, newChoices] = await ChatGPTClient.continue(storyAtPosition, choice, isEnding ? 0 : story.choicesLength);
-    
-    // Persist
-    const newSegmentDict = await (story as any).updateSegment(actions, newSegment) // Insert Segment
-    const newChoicesDict = (newChoices.length) ?
-        await (story as any).updateChoices(actions, newChoices) : // Insert Choices
-        await (story as any).updateChoices(actions, Array.from({ length: story.choicesLength }).fill(null)) // Insert null choices indicating ending
-    
-    // story.markModified('segments'); SAFER
-    await Story.updateOne({ _id: story.id }, { $set: story.toJSON() });
+        const choice = await (story as any).getChoice(actions)
+        const isEnding = calcEnding(actions.length, story.storyLengthMin, story.storyLengthMax)
+        const [newSegment, newChoices] = await ChatGPTClient.continue(storyAtPosition, choice, isEnding ? 0 : story.choicesLength);
 
-    // Response
-    let result = {
-        segments: { ...newSegmentDict },
-        choices: newChoicesDict,
-        generated: true
+        // Persist
+        const newSegmentDict = await (story as any).updateSegment(actions, newSegment) // Insert Segment
+        const newChoicesDict = (newChoices.length) ?
+            await (story as any).updateChoices(actions, newChoices) : // Insert Choices
+            await (story as any).updateChoices(actions, Array.from({ length: story.choicesLength }).fill(null)) // Insert null choices indicating ending
+
+        // story.markModified('segments'); SAFER
+        await Story.updateOne({ _id: story.id }, { $set: story.toJSON() });
+    } catch (error) {
+        logger.error(error)
     }
-    return result
 }
