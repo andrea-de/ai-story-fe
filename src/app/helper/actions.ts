@@ -125,7 +125,6 @@ export const postStoryAction = async (tag: string, actionString: string, write =
 
     /* MUTATES STORY */ // Needs to confirm authorization for story writing/overwriting
     continueStory(story, actions)
-    console.log('continue story?');
 
     return {
         generated: true
@@ -135,7 +134,6 @@ export const postStoryAction = async (tag: string, actionString: string, write =
 
 const continueStory = async (story: any, actions: number[]) => {
     try {
-        console.log('continue story?');
         const storyAtPositionDict = await (story as any).getStoryAtPosition(actions)
         const storyAtPosition: string[] = Object.values(storyAtPositionDict)
 
