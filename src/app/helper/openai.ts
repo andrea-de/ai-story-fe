@@ -87,9 +87,9 @@ class Chat {
     logAPIMetrics = (task?: string) => {
         const taskMessage = !task ? '' : ` (${task})`
         const timer = ` ${(((new Date()).getTime() - this.timer.getTime()) / 1000).toFixed(1)} seconds`
-        if (this.tokens <= 200) console.info(chalk.bold.greenBright('Tokens Used: ' + this.tokens) + taskMessage + timer + ` (${this.model})` + '\n');
-        else if (this.tokens <= 500) console.info(chalk.bold.redBright('Tokens Used: ' + this.tokens) + taskMessage + timer + ` (${this.model})` + '\n');
-        else { console.info(chalk.bold.bgRedBright('Tokens Used: ' + this.tokens) + taskMessage + timer + ` (${this.model})` + '\n'); }
+        if (this.tokens <= 200) console.info(chalk.bold.greenBright('Tokens Used: ' + this.tokens) + taskMessage + timer + ` (${this.model})`);
+        else if (this.tokens <= 500) console.info(chalk.bold.redBright('Tokens Used: ' + this.tokens) + taskMessage + timer + ` (${this.model})`);
+        else { console.info(chalk.bold.bgRedBright('Tokens Used: ' + this.tokens) + taskMessage + timer + ` (${this.model})`); }
     }
 
 }
