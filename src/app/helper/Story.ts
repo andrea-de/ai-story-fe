@@ -16,7 +16,8 @@ export const storySchema = new Schema(
 
         storyWords: { type: Number, default: 50 }, // How many words should be told at the point in the story
         choicesWords: { type: Number, default: 10 }, // How many words should be in a choice
-
+        
+        // generating: { type: Boolean, required: false }, // generating currently
         completed: { type: Number, default: 0 }, // From 0 to 100
         finished: { type: Boolean, default: false }, // are there any unwritten sections
         latest: { type: Boolean, default: false }, // is this unfinished and not the latest of all the stories of the root 

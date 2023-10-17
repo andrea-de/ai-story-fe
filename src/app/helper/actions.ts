@@ -140,6 +140,13 @@ const continueStory = async (story: any, actions: number[]) => {
 
         const choice = await (story as any).getChoice(actions)
         const isEnding = calcEnding(actions.length, story.storyLengthMin, story.storyLengthMax)
+        
+        // Temporary
+        await (story as any).updateSegment(actions, 'Generating')
+        await (story as any).updateChoices(actions, Array.from({ length: story.choicesLength }).fill(null)) // Insert null choices indicating ending
+        await Story.updateOne({ _id: story.id }, { $set: story.toJSON() });
+        
+        // Generation
         const [newSegment, newChoices] = await ChatGPTClient.continue(storyAtPosition, choice, isEnding ? 0 : story.choicesLength);
 
         // Persist

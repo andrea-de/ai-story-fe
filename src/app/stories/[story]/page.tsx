@@ -28,16 +28,22 @@ export default function Page() {
 
     const loadStory = async (attempts: number = 0) => {
         try {
-            if (attempts) await new Promise(res => { setTimeout(res, 5000) })
             const storyResponse = await fetch(url + '?position=' + position)
             // const storyResponse = await fetch(url + '?position=' + '1-1-1-1-1')
             if (!storyResponse.ok) throw new Error(storyResponse.statusText)
             const loaded = await storyResponse.json()
+            if (Object.values(loaded.segments).slice(-1)[0] === 'Generating') {
+                setLoading('Generating' + '.'.repeat(attempts))
+                if (attempts > 5) throw Error ('Story stuck in generating status')
+                await new Promise(res => { setTimeout(res, 5000 * (attempts+1)) })
+                await loadStory(attempts+1)
+                return
+            }
             if (loaded.error) throw loaded.error
+            console.log('loaded: ', loaded);
             setStory(loaded);
         } catch (error: any) {
-            if (attempts > 0) await loadStory(attempts - 1)
-            console.error('Error loading story' + error.message)
+            console.error('Error loading story: ' + error.message)
             rewindStory()
         }
     }
@@ -54,22 +60,13 @@ export default function Page() {
                     })
                 })
             if (!actionResponse.ok) throw new Error(actionResponse.statusText)
-            const { generated } = await actionResponse.json()
-            if (generated) {
-                console.log('Story Generating in Server');
-                setLoading('Generating')
-                setTimeout(() => setPosition(action), 15000)
-            }
-            else setPosition(action)
+            setPosition(action)
         } catch (error: any) {
             console.error('Error posting action' + error.message)
         }
     }
 
-    useEffect(() => {
-        if (loadingState != 'Generating') loadStory()
-        else loadStory()
-    }, [position]) // Story loads on position change
+    useEffect(() => { loadStory() }, [position]) // Story loads on position change
     useEffect(() => { setLoading('Loaded') }, [story]) // Loaded reacts to story change
     useEffect(() => { scroll() }, [loadingState]) // Scroll position on loaded
 
