@@ -134,6 +134,7 @@ export const postStoryAction = async (tag: string, actionString: string, write =
 
 const continueStory = async (story: any, actions: number[]) => {
     try {
+        console.log(`Generating story: ${story} - action: ${actions.join}`);
         const storyAtPositionDict = await (story as any).getStoryAtPosition(actions)
         const storyAtPosition: string[] = Object.values(storyAtPositionDict)
 
@@ -149,6 +150,7 @@ const continueStory = async (story: any, actions: number[]) => {
 
         // story.markModified('segments'); SAFER
         await Story.updateOne({ _id: story.id }, { $set: story.toJSON() });
+        console.log(`Generation Completed`);
     } catch (error) {
         logger.error(error)
     }
