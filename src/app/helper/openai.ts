@@ -1,9 +1,11 @@
 import chalk from "chalk";
 import logger from "@/app/helper/logger";
 
-import OpenAI from 'openai';
 // import { OpenAIStream,  } from 'ai';
 // import { OpenAIStream, StreamingTextResponse } from 'ai';
+import OpenAI from 'openai';
+export const runtime = 'edge';
+import { useCompletion } from 'ai/react';
 
 const API_KEY = process.env.REACT_APP_OPENAI_KEY
 
@@ -46,9 +48,9 @@ class Chat {
     stack: { role: string, content: string }[] = [];
     tokens: number
     timer: Date
-    // model: string = "gpt-3.5-turbo" // price: .0004 / 1K
+    model: string = "gpt-3.5-turbo" // price: .0004 / 1K
     // model: string = "gpt-3.5-turbo-0301"
-    model: string = "gpt-3.5-turbo-0613" // fastest
+    // model: string = "gpt-3.5-turbo-0613" // fastest
 
     constructor() {
         this.tokens = 0

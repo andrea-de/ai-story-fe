@@ -40,7 +40,6 @@ export default function Page() {
                 return
             }
             if (loaded.error) throw loaded.error
-            console.log('loaded: ', loaded);
             setStory(loaded);
         } catch (error: any) {
             console.error('Error loading story: ' + error.message)
