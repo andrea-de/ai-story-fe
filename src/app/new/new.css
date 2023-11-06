@@ -1,0 +1,14 @@
+@tailwind components;
+
+@layer components {
+
+    /* Mobile */
+    @media (max-width: 800px) {
+        /* ::-webkit-resizer {
+        } */
+    }
+
+    /* Wide screen */
+    @media (min-width: 800px) {}
+
+}

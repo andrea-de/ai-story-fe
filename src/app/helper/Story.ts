@@ -2,8 +2,9 @@ import mongoose, { Schema } from 'mongoose';
 
 export const storySchema = new Schema(
     {
-        description: { type: String, required: false }, // provided by user
+        description: { type: String, required: true }, // provided by user
         name: { type: String, required: true }, // provided by user or generated
+        instruction: { type: String, required: false }, // provided by user
         blurb: { type: String, required: false }, // generated
         tag: { type: String, required: false, unique: true }, // generated
 
@@ -46,6 +47,10 @@ export const storySchema = new Schema(
             async getChoices(position: number[]): Promise<object> { // [1,2] -> Returns choices 1-2-1, 1-2-2 ... n of choicesLength
                 const choiceKeys: string[] = getChoiceKeysFromPosition(position, this.choicesLength); // [1,2] should search for "1" and "1-(n)" n=choicesLength
                 return choiceKeys.reduce((obj, key) => (this.choices.hasOwnProperty(key) ? { ...obj, [key]: this.choices[key] } : obj), {})
+            },
+            async getReadyChoices(position: number[]): Promise<string[]> {
+                const choiceKeys: string[] = getChoiceKeysFromPosition(position, this.choicesLength); // [1,2] should search for "1" and "1-(n)" n=choicesLength
+                return choiceKeys.reduce((array: string[], key) => (this.segments.hasOwnProperty(key) ? [...array, key] : array), [])
             },
             async updateSegment(position: number[], segment: string[]): Promise<object> {
                 if (position.length > 1) position = position.filter(p => p != 0)

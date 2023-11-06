@@ -43,6 +43,31 @@ async function POST_FETCH(messages: any, model: string, temperature?: string) {
 
 }
 
+import { OpenAIStream, StreamingTextResponse,  } from 'ai';
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions.mjs";
+
+const openai = new OpenAI({
+    apiKey: process.env.REACT_APP_OPENAI_KEY || '',
+});
+
+// export async function STREAM(stack: { role: string, content: string }[]) {
+export async function STREAM(stack: ChatCompletionMessageParam[]) {
+    try {
+        const response = await openai.chat.completions.create({
+            model: 'gpt-3.5-turbo',
+            stream: true,
+            // messages: [{ "role": "user", "content": "hi!!" }]
+            messages: stack
+        });
+
+        const stream = OpenAIStream(response);
+        return new StreamingTextResponse(stream);
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 class Chat {
 
     stack: { role: string, content: string }[] = [];
@@ -59,6 +84,13 @@ class Chat {
 
     last = () => this.stack[this.stack.length - 1].content;
 
+    async stream({ message, temperature = 0.9, task = null }: { message: string, temperature?: number, task?: string | null }): Promise<string> {
+        const newMessage = { "role": "user", "content": message.concat() };
+        this.stack.push(newMessage);
+        await this.fetch(this.stack, temperature, task)
+        return this.last();
+    }
+    
     async send({ message, temperature = 0.9, task = null }: { message: string, temperature?: number, task?: string | null }): Promise<string> {
         const newMessage = { "role": "user", "content": message.concat() };
         this.stack.push(newMessage);
@@ -70,6 +102,27 @@ class Chat {
         // if (task != null) console.debug('OpenAI Fetch Started: ' + task.toString())
         // const response: any = await POST_FETCH(messages, this.model)
         const response: any = await POST(messages, this.model)
+        // if (task != null) console.debug('OpenAI Fetch Finished: ' + task.toString())
+        if (response.error) {
+            console.error(`GPT_ERROR: ${response.error.type} - ${response.error.message} \n`);
+            throw new Error('Model Request Error: ' + response.error.message)
+        }
+        else if (response.choices[0].finish_reason != 'stop') {
+            console.error(`GPT_INCOMPLETE: ${response.choices[0].finish_reason} \n`);
+            throw new Error('OpenAI Response Incomplete: ' + response.choices[0].finish_reason)
+        }
+        else {
+            const newMessage = response.choices[0].message
+            this.tokens += response.usage.total_tokens
+            this.stack.push(newMessage)
+        }
+    }
+    
+    
+    async fetchstream(messages: { role: string, content: string }[], temperature: number, task: string | null,) {
+        // if (task != null) console.debug('OpenAI Fetch Started: ' + task.toString())
+        // const response: any = await POST_FETCH(messages, this.model)
+        const response: any = await STREAM(messages as ChatCompletionMessageParam[])
         // if (task != null) console.debug('OpenAI Fetch Finished: ' + task.toString())
         if (response.error) {
             console.error(`GPT_ERROR: ${response.error.type} - ${response.error.message} \n`);

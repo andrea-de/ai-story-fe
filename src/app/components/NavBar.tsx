@@ -1,10 +1,6 @@
 "use client"
 
 /* Bundle size problem -- https://github.com/react-icons/react-icons/issues/154 */
-// import { BsGearFill, BsFilePersonFill } from 'react-icons/bs';
-// import { TbBooks } from 'react-icons/tb';
-// import { GiRuleBook, GiOpenBook, GiSpellBook, GiBookCover } from 'react-icons/gi';
-import { BsGearFill } from '@react-icons/all-files/bs/BsGearFill';
 import { IoPersonSharp } from '@react-icons/all-files/io5/IoPersonSharp';
 import { IoLibrary } from '@react-icons/all-files/io5/IoLibrary';
 import { GiSpellBook } from '@react-icons/all-files/gi/GiSpellBook';
@@ -12,32 +8,65 @@ import { GiRuleBook } from '@react-icons/all-files/gi/GiRuleBook';
 import { GiOpenBook } from '@react-icons/all-files/gi/GiOpenBook';
 import { GiBookCover } from '@react-icons/all-files/gi/GiBookCover';
 
-import Link from "next/link";
-import { useState } from "react";
-import { MouseEventHandler } from 'react';
+import { useGlobalContext } from '@/app/context';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import './navbar.css'
 
 export default function NavBar() {
-    const [selected, setSelected] = useState('')
+    const router = useRouter()
 
-    const navAction = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-        const target = event.target as HTMLDivElement;
-        if (!target.id) console.log(target)
-        setSelected(target.id.split(' ')[0]);
+    const { userId, setUserId, page, openStories, setOpenStories } = useGlobalContext();
+
+    const navAction = (link: string): void => {
+        console.log('link: ', link);
+        router.push(link);
     }
 
+    const removeOpenStory = (tag: string) => {
+        const story = document.querySelector(`div > div#${tag}`)
+        if (story && story.className) story.className += ' opacity-0'
+        setTimeout(() => {
+            setOpenStories((stories) => {
+                const newOpenStories = { ...stories };
+                delete newOpenStories[tag];
+                return newOpenStories;
+            })
+        }, 500)
+    }
+
+    const close = (tag: string): void => {
+        removeOpenStory(tag)
+        if (page === tag) router.push('/stories');
+    }
+
+    useEffect(() => {
+        if (Object.keys(openStories).length > 3) {
+            const tag = Object.keys(openStories)[0]
+            removeOpenStory(tag)
+        }
+    }, [openStories])
+
     return (
-        <div className="navbar">
-            <SideBarIcon icon={<GiSpellBook size="30" />} link={'/about'} text={'About'} selected={selected} onMouseClick={navAction} />
+        <div className={`navbar ${page == 'main' ? 'opacity-0' : ''}`}>
+            <SideBarIcon icon={<GiSpellBook size="30" />} link={'/about'} text={'About'} selected={'about'} current={page} onMouseClick={navAction} />
+            {false &&
+                <SideBarIcon icon={<IoPersonSharp size="26" />} link={'/profile'} text={''} selected={'profile'} current={page} onMouseClick={navAction} />
+            }
+
             <Divider />
-            <SideBarIcon icon={<IoLibrary size="28" />} link={'/stories'} text={'Stories'} selected={selected} onMouseClick={navAction} />
-            <SideBarIcon icon={<GiRuleBook size="26" />} link={'/stories/random'} text={'Random story'} selected={selected} onMouseClick={navAction} />
-            <SideBarIcon icon={<GiOpenBook size="26" />} link={'/stories/new'} text={'New story'} selected={selected} onMouseClick={navAction} />
-            {/* <Divider />
-            <SideBarIcon icon={<IoPersonSharp size="24" />} link={'/settings'} text={'Profile'} />
-            <SideBarIcon icon={<BsGearFill size="24" />} link={'/settings'} text={'Settings'} /> */}
-            {/* <Divider /> */}
-            {/* <SideBarIcon icon={<GiBookCover size="24" />} link={'/stories/random'} text={'Open Story'} /> */}
+
+            <SideBarIcon icon={<IoLibrary size="28" />} link={'/stories'} text={'Stories'} selected={'stories'} current={page} onMouseClick={navAction} />
+            <SideBarIcon icon={<GiOpenBook size="26" />} link={'/new'} text={'New story'} selected={'new'} current={page} onMouseClick={navAction} />
+
+            {Object.keys(openStories).length > 0 && <Divider />}
+            {Object.entries(openStories).map(([tag, story]) => (
+                <SideBarIcon key={tag} icon={<GiBookCover size="24" />} link={`/stories/${tag}?position=${story.position}`} text={story.title} selected={tag} current={page} onMouseClick={navAction} close={close} />
+            ))}
+            {Object.keys(openStories).length > 0 && <Divider />}
+
+            <SideBarIcon icon={<GiRuleBook size="26" />} link={'/random'} text={'Random story'} selected={''} current={page} onMouseClick={navAction} />
+
         </div>
     );
 };
@@ -47,21 +76,18 @@ interface SideBarIconProps {
     link: string;
     text: string;
     selected: string;
-    onMouseClick: MouseEventHandler<HTMLDivElement>;
+    current: string;
+    onMouseClick: any;
+    close?: any;
 }
 
-const SideBarIcon: React.FC<SideBarIconProps> = ({ icon, link, text, selected, onMouseClick }) => {
-    const id = text.split(' ')[0]
-    const isSelected = selected === id
-
+const SideBarIcon: React.FC<SideBarIconProps> = ({ icon, link, text, selected, current, onMouseClick, close }) => {
     return (
-        // <Link href={link}>
-        <Link href={link} rel="preload">
-            <div id={id}
-                onClick={onMouseClick}
-                className={`relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto
-                    ${isSelected ? 'bg-white text-secondary rounded-xl' : 'bg-secondary text-white rounded-3xl'}
-                    hover:bg-tertiary hover:text-white 
+        <div className='relative mx-2 my-2 w-fit transition-all duration-300'>
+            <div id={selected} onClick={() => onMouseClick(link)}
+                className={`flex items-center justify-center h-14 w-14 mx-auto
+                    ${selected === current ? 'bg-white text-secondary rounded-xl' : 'bg-secondary text-white rounded-3xl'}
+                    md:hover:bg-tertiary md:hover:text-white ${selected == 'random' ? 'active:bg-purple-700' : ''}
                     hover:rounded-xl transition-all duration-300 ease-linear cursor-pointer shadow-lg group`}>
                 <div className='pointer-events-none'>
                     {icon}
@@ -72,21 +98,15 @@ const SideBarIcon: React.FC<SideBarIconProps> = ({ icon, link, text, selected, o
                     {text}
                 </span>
             </div>
-        </Link>
+            {selected.includes('-') &&
+                <div
+                    onClick={() => close(selected)}
+                    className='absolute right-[-0.5em] top-[-0.5em] bg-red-500 text-white text-sm px-1 rounded-full cursor-pointer'>
+                    X
+                </div>
+            }
+        </div>
     );
 };
-
-const SideBarIconServer = ({ icon, link, text }: { icon: any, link: string, text: string }) => (
-    // <Link href={link} rel="preload">
-    <Link href={link}>
-        <div
-            className="relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto bg-secondary hover:bg-tertiary text-white hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg">
-            {icon}
-            <span className="absolute w-auto p-2 m-2 min-w-max left-16 rounded-md shadow-md text-white bg-background text-xs font-bold transition-all duration-100 scale-0 origin-left group-hover:scale-100 z-10">
-                {text}
-            </span>
-        </div>
-    </Link>
-);
 
 const Divider = () => <hr className="border-secondary rounded-full border-2" />;

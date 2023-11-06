@@ -3,52 +3,66 @@
 @tailwind utilities;
 
 @layer components {
-
-  html {
-    overflow: hidden;
-    height: 100svh;
-  }
-
-  body {
-    height: 100svh;
-  }
-
-  h1 {
-    text-shadow: 1px 1px 2px white;
-  }
-
-  /* Mobile */
-  @media (max-width: 800px) {
-
+    
     body {
-      @apply flex flex-col-reverse justify-between text-xs
+        height: 100svh;
+        overflow: hidden;
+        user-select: none;
     }
 
-  }
-
-  /* Wide screen */
-  @media (min-width: 800px) {
-
-    body {
-      @apply flex justify-start
+    h1 {
+        text-shadow: 1px 1px 2px white;
     }
 
-  }
+    /* Mobile */
+    @media (max-width: 800px) {
 
-  ::-webkit-scrollbar {
-    @apply w-2
-  }
+        body {
+            @apply flex flex-col-reverse justify-between text-xs
+        }
 
-  ::-webkit-scrollbar-thumb {
-    @apply bg-secondary
-  }
+        main {
+            @apply max-h-[85%]
+        }
 
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-tertiary
-  }
-  
-  ::-webkit-scrollbar-corner {
-    /* display: none; */
-    @apply bg-tertiary
-  }
+    }
+
+    /* Wide screen */
+    @media (min-width: 800px) {
+
+        body {
+            @apply flex justify-start
+        }
+
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+        @apply border border-solid border-background
+        /* @apply w-4 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        /* border: 10px solid transparent; */
+        /* border: 5px solid transparent; */
+        @apply border-solid border-background
+        /* @apply bg-secondary w-2 */
+    }
+    
+    ::-webkit-scrollbar-track {
+        @apply border-solid border-background
+        /* @apply bg-background */
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-tertiary
+        /* @apply bg-background */
+    }
+    
+    ::-webkit-scrollbar-corner {
+        /* display: none; */
+        /* @apply w-4 bg-background border-solid border-background */
+        /* @apply w-4 border-blue-500 border-spacing-2 border-2 */
+        /* @apply bg-background */
+    }
 }

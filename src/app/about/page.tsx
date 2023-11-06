@@ -1,10 +1,13 @@
+import './about.css'
+
 export default function AboutPage() {
+    
     const name = 'ChoiceAI';
 
     return (
-        <div className="pr-2 mx-5 text-justify flex flex-col max-h-full max-w-2xl">
+        <div className="max-h-full w-[80%] max-w-2xl text-justify flex flex-col">
             <h1 className="mb-5 text-3xl text-center">{name} Adventures</h1>
-            <div className="grow overflow-scroll pr-2 text-lg">
+            <div className="grow overflow-scroll pr-2">
                 <span>
                     {`Introducing "${name} Adventures", an innovative and immersive storytelling application that puts you at the heart of the narrative. With ${name}, you become the author of your own adventures. Craft a captivating story in the second person narrative, set the stage with your chosen settings, and then embark on a thrilling journey. As the protagonist, you'll face decisions at critical junctures, shaping the tale's outcome. Will you choose the path of a hero, a detective, or perhaps an explorer? ${name} offers endless possibilities.`}
                 </span>

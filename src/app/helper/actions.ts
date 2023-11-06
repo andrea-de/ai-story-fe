@@ -15,23 +15,24 @@ export const getStory = async (tag: string) => {
     return story
 }
 
-export const getStoryAtPosition = async (tag: string, position: string) => {
+export const getStoryAtPosition = async (tag: string, positionString: string) => {
     const story: any = await Story.findOne({ tag })
     if (!story) throw new Error('TagInvalid: ' + tag + ' not found');
 
-    const positions = position.split('-').map(p => parseInt(p))
-    const positionExists = story.segments.hasOwnProperty(position)
+    const positionExists = story.segments.hasOwnProperty(positionString)
     if (!positionExists) throw new Error('PositionInvalid');
 
-    const segments = await (story as any).getStoryAtPosition([...positions]);
-    let choices = await (story as any).getChoices([...positions]);
-    if (Object.values(choices).every(value => value === null)) choices = {}
+    const positionArray = positionString.split('-').map(p => parseInt(p))
+    const segments = await (story as any).getStoryAtPosition([...positionArray]);
+    const choices = await (story as any).getChoices([...positionArray]);
+    const ready = await (story as any).getReadyChoices([...positionArray]);
 
     return {
         name: story.name,
         tag: story.tag,
         segments: segments,
-        choices: choices
+        choices: choices,
+        ready: ready
     }
 }
 

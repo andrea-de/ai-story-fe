@@ -4,16 +4,14 @@
 
     /* Mobile */
     @media (max-width: 800px) {
-        .form-options {
-            @apply flex flex-col gap-5 justify-center
+        span {
+            @apply text-base mx-5
         }
+
     }
 
     /* Wide screen */
     @media (min-width: 800px) {
-        .form-options {
-            @apply flex flex-row items-center
-        }
-    }
 
+    }
 }

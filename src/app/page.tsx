@@ -1,89 +1,68 @@
-// import { redirect } from 'next/navigation'
+"use client"
 
-// export default function Home() {
-//   redirect('/about')
-// }
+import { IoLibrary } from '@react-icons/all-files/io5/IoLibrary';
+import { GiSpellBook } from '@react-icons/all-files/gi/GiSpellBook';
+import { GiRuleBook } from '@react-icons/all-files/gi/GiRuleBook';
+import { GiOpenBook } from '@react-icons/all-files/gi/GiOpenBook';
 
-'use client';
+import Link from 'next/link';
+import { useEffect } from 'react';
 
-import { useChat, useCompletion } from 'ai/react';
-import React, { useEffect, useState } from "react";
+import { useGlobalContext } from './context';
 
-export default function Chat() {
+export default function Page() {
+    const { userId, setUserId, setPage } = useGlobalContext();
 
-    interface MyObject {
-        [key: string]: string;
-    }
+    useEffect(() => {
+        setPage('main')
+    }, [])
 
-    const [segments, setSegments] = useState<MyObject>({
-        0: 'Introduction',
-        1: 'First segment'
-    });
-
-    const [choices, setChoices] = useState<MyObject>({
-        "1-1": 'First choice',
-        "1-2": 'Second choice'
-    });
-
-
-    const completion = async (target: string) => {
-        const targetValue = target; // Store target in a separate variable
-
-        await fetch('/api/completion')
-            .then((res) => res.body)
-            .then(async (body) => {
-                if (!body) return;
-                const reader = body.getReader();
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    console.log(targetValue);
-
-                    const prevMyObject = {
-                        [targetValue]: '', // Initialize it with an empty string or the appropriate initial value
-                    };
-
-                    const newChunk = Buffer.from(value).toString("utf-8");
-                    setSegments((prevMyObject) => ({
-                        ...prevMyObject,
-                        [targetValue]: prevMyObject[targetValue] + newChunk, // Use targetValue here
-                    }));
-                }
-            });
-
-        console.log(segments);
-    }
-
-    const postAction = async (action: string) => {
-        await completion(action)
-        // query existing or instruction
-        // query next segment
-        // if (!end) query choice
-        // if (!choices.length) query new choice
+    const navAction = (id: string): void => {
+        setTimeout(() => setPage(id), 200);
     }
 
     return (
-
-        <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-            <div className='segments h-full overflow-auto'>
-                <div className="bg-secondary rounded-md p-2">
-                    {Object.entries(segments).map(([position, segment]) => (
-                        <p className="mb-4" key={position}>{segment}</p>
-                    ))}
-                </div>
-                <div className="story-choices mr-5 mb-5">
-                    {
-                        Object.entries(choices).map(([choice, choices]) => (
-                            <button onClick={() => postAction(choice)} // first choice 1 not 0 
-                                className="mt-5 p-2 w-full text-left shadow-lg rounded-md bg-tertiary hover:bg-secondary" key={choice}>
-                                {choices}
-                            </button>
-                        ))
-                    }
-                </div>
+        <div className='flex flex-col justify-center items-center gap-5 mx-10'>
+            <h1 className='text-3xl'>ChoiceAI Adventures</h1>
+            <p className='max-2xl text-lg'>
+                Read and write stories with ChoiceAI.
+            </p>
+            <div className='flex flex-wrap justify-center mx-10'>
+                <Icon icon={<GiSpellBook size="46" />} link={'/about'} text={'About'} onMouseClick={navAction} />
+                <Icon icon={<IoLibrary size="40" />} link={'/stories'} text={'Stories'} onMouseClick={navAction} />
+                <Icon icon={<GiRuleBook size="40" />} link={'/stories/random'} text={'Random story'} onMouseClick={navAction} />
+                <Icon icon={<GiOpenBook size="40" />} link={'/new'} text={'New story'} onMouseClick={navAction} isUser={true} />
+                {/* <Icon icon={<GiOpenBook size="40" />} link={'/new'} text={'New story'} onMouseClick={navAction} isUser={userId != ''} /> */}
+            </div>
+            <div hidden className={`text-center m-5 ${userId ? 'opacity-0' : ''}`}>
+                <button onClick={() => { setUserId('1') }}
+                    className='p-5 m-5 text-3xl font-bold text-center bg-secondary hover:bg-tertiary rounded-xl'>
+                    Login
+                </button>
             </div>
         </div>
-    );
+    )
 }
+
+const Icon = ({ icon, link, text, isUser = true, onMouseClick }: { icon: JSX.Element, link: string, text: string, isUser?: boolean, onMouseClick: any }) => {
+    const id = text.split(' ')[0].toLowerCase()
+
+    return (
+        <Link href={link}>
+            <div
+                onClick={() => onMouseClick(id)}
+                className={`group transition-all duration-300 ease-linear w-24 flex flex-col items-center rounded-lg
+                ${!isUser ? 'pointer-events-none border-2 border-dashed border-yellow-600' : ''}`}>
+                <div
+                    className={`flex items-center justify-center h-20 w-20 mt-2 mb-2 mx-auto rounded-3xl shadow-lg pointer-events-none
+                bg-secondary text-white  group-hover:bg-tertiary group-hover:text-white group-hover:rounded-xl`}>
+                    {icon}
+                </div>
+                <span
+                    className="p-[.3rem] mt-2 rounded-md shadow-md text-xs font-bold text-white group-hover:bg-tertiary pointer-events-none">
+                    {text}
+                </span>
+            </div>
+        </Link>
+    );
+};

@@ -5,7 +5,7 @@
     /* Mobile */
     @media (max-width: 800px) {
         .navbar {
-            @apply w-full mb-4 flex flex-row gap-3 justify-center;
+            @apply w-[100%] h-fit left-0 py-2 px-4 flex flex-row gap-1 justify-start overflow-x-auto;
         }
 
         .navbar hr {
@@ -13,7 +13,7 @@
         }
         
         .tooltip {
-            @apply bottom-16 origin-bottom
+            @apply bottom-16 origin-bottom duration-200
         }
         
     }

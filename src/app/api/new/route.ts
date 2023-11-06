@@ -1,12 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createStory, getStories } from '../../helper/actions';
+import { Story } from '@/app/helper/connection';
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json()
-        const created = await createStory(body.description, body.parts, body.choices)
-        return NextResponse.json(created);
+        // userdb
+
+        const story = new Story({
+            name: body.name,
+            description: body.description,
+            instruction: body.instruction,
+            tag: body.tag,
+            blurb: body.description,
+            storyLengthMin: body.parts - 1,
+            storyLengthMax: body.parts + 1,
+            choicesLength: body.choicesLength,
+            segments: body.segments,
+            choices: body.choices,
+            // user: userdb
+        });
+
+        // Change tag if taken and return tag
+        await story.save();
+
+        return NextResponse.json(story.tag);
     } catch (error: any) {
-        return NextResponse.json(null, { status: 400, statusText: error.message })
+        console.error('error: ', error.message);
+        return NextResponse.json(null, { status: 400, statusText: JSON.stringify(error.message) })
     }
 }
+
+// Todo: Persist User, Unique Tag
