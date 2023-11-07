@@ -10,29 +10,16 @@ import { GiBookCover } from '@react-icons/all-files/gi/GiBookCover';
 
 import { useGlobalContext } from '@/app/context';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import './navbar.css'
+import React from 'react';
 
 export default function NavBar() {
     const router = useRouter()
 
-    const { userId, setUserId, page, openStories, setOpenStories } = useGlobalContext();
+    const { userId, setUserId, page, openStories, removeOpenStory } = useGlobalContext();
 
     const navAction = (link: string): void => {
-        console.log('link: ', link);
         router.push(link);
-    }
-
-    const removeOpenStory = (tag: string) => {
-        const story = document.querySelector(`div > div#${tag}`)
-        if (story && story.className) story.className += ' opacity-0'
-        setTimeout(() => {
-            setOpenStories((stories) => {
-                const newOpenStories = { ...stories };
-                delete newOpenStories[tag];
-                return newOpenStories;
-            })
-        }, 500)
     }
 
     const close = (tag: string): void => {
@@ -40,15 +27,21 @@ export default function NavBar() {
         if (page === tag) router.push('/stories');
     }
 
-    useEffect(() => {
-        if (Object.keys(openStories).length > 3) {
-            const tag = Object.keys(openStories)[0]
-            removeOpenStory(tag)
-        }
-    }, [openStories])
+    const stories = Object.entries(openStories).map(([tag, story]) => (
+        <SideBarIcon
+            key={tag}
+            icon={<GiBookCover size="24" />}
+            link={`/stories/${tag}?position=${story.position}`}
+            text={story.title}
+            selected={tag}
+            current={page}
+            onMouseClick={navAction}
+            close={close}
+        />
+    ));
 
     return (
-        <div className={`navbar ${page == 'main' ? 'opacity-0' : ''}`}>
+        <div className={`navbar ${page == '' ? 'opacity-0' : ''}`}>
             <SideBarIcon icon={<GiSpellBook size="30" />} link={'/about'} text={'About'} selected={'about'} current={page} onMouseClick={navAction} />
             {false &&
                 <SideBarIcon icon={<IoPersonSharp size="26" />} link={'/profile'} text={''} selected={'profile'} current={page} onMouseClick={navAction} />
@@ -59,11 +52,13 @@ export default function NavBar() {
             <SideBarIcon icon={<IoLibrary size="28" />} link={'/stories'} text={'Stories'} selected={'stories'} current={page} onMouseClick={navAction} />
             <SideBarIcon icon={<GiOpenBook size="26" />} link={'/new'} text={'New story'} selected={'new'} current={page} onMouseClick={navAction} />
 
-            {Object.keys(openStories).length > 0 && <Divider />}
-            {Object.entries(openStories).map(([tag, story]) => (
-                <SideBarIcon key={tag} icon={<GiBookCover size="24" />} link={`/stories/${tag}?position=${story.position}`} text={story.title} selected={tag} current={page} onMouseClick={navAction} close={close} />
-            ))}
-            {Object.keys(openStories).length > 0 && <Divider />}
+            {stories.length > 0 &&
+                <>
+                    <Divider />
+                    {stories}
+                    <Divider />
+                </>
+            }
 
             <SideBarIcon icon={<GiRuleBook size="26" />} link={'/random'} text={'Random story'} selected={''} current={page} onMouseClick={navAction} />
 
@@ -83,7 +78,7 @@ interface SideBarIconProps {
 
 const SideBarIcon: React.FC<SideBarIconProps> = ({ icon, link, text, selected, current, onMouseClick, close }) => {
     return (
-        <div className='relative mx-2 my-2 w-fit transition-all duration-300'>
+        <div className={`relative mx-2 my-2 w-fit ${text === '' ? 'transition-all duration-200 ease-out animate-ping': ''}`}>
             <div id={selected} onClick={() => onMouseClick(link)}
                 className={`flex items-center justify-center h-14 w-14 mx-auto
                     ${selected === current ? 'bg-white text-secondary rounded-xl' : 'bg-secondary text-white rounded-3xl'}
@@ -107,6 +102,6 @@ const SideBarIcon: React.FC<SideBarIconProps> = ({ icon, link, text, selected, c
             }
         </div>
     );
-};
+}
 
 const Divider = () => <hr className="border-secondary rounded-full border-2" />;

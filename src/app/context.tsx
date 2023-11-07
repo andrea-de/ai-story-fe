@@ -1,7 +1,7 @@
 
 'use client';
 
-import { createContext, useContext, Dispatch, SetStateAction, useState, ReactNode, useEffect } from "react";
+import { createContext, useContext, Dispatch, SetStateAction, useState, ReactNode } from "react";
 
 type DataType = {
     firstName: string
@@ -24,6 +24,7 @@ interface ContextProps {
     openStories: OpenStory
     setOpenStories: Dispatch<SetStateAction<OpenStory>>
     amendOpenStories: (tag: string, position: string, title: string) => void
+    removeOpenStory: (tag: string) => void
 }
 
 const GlobalContext = createContext<ContextProps>({
@@ -35,7 +36,8 @@ const GlobalContext = createContext<ContextProps>({
     setData: (): DataType[] => [],
     openStories: {},
     setOpenStories: (): OpenStory => { return {} },
-    amendOpenStories: (): void => { }
+    amendOpenStories: (): void => { },
+    removeOpenStory: (): void => { }
 })
 
 export const GlobalContextProvider = ({ children }: { children: ReactNode }) => {
@@ -73,11 +75,24 @@ export const GlobalContextProvider = ({ children }: { children: ReactNode }) => 
             }
         }
     }
-
-    useEffect(() => console.log(openStories), [openStories])
+    
+    const removeOpenStory = (tag: string): void => {
+            setOpenStories((stories) => {
+                const newStories = {...stories}
+                newStories[tag].title = ''
+                return newStories
+            });
+            setTimeout(() => {
+                setOpenStories((stories) => {
+                    const newStories = {...stories}
+                    delete newStories[tag]
+                    return newStories
+                });
+            }, 300)
+    }
 
     return (
-        <GlobalContext.Provider value={{ userId, setUserId, page, setPage, openStories, setOpenStories, amendOpenStories, data, setData }}>
+        <GlobalContext.Provider value={{ userId, setUserId, page, setPage, openStories, setOpenStories, amendOpenStories, removeOpenStory, data, setData }}>
             {children}
         </GlobalContext.Provider>
     )

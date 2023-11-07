@@ -11,17 +11,13 @@ import { useEffect } from 'react';
 import { useGlobalContext } from './context';
 
 export default function Page() {
-    const { userId, setUserId, setPage } = useGlobalContext();
-
-    useEffect(() => {
-        setPage('main')
-    }, [])
+    const { userId, setUserId, page, setPage } = useGlobalContext();
 
     const navAction = (id: string): void => {
         setTimeout(() => setPage(id), 200);
     }
 
-    return (
+    return (page == '' &&
         <div className='flex flex-col justify-center items-center gap-5 mx-10'>
             <h1 className='text-3xl'>ChoiceAI Adventures</h1>
             <p className='max-2xl text-lg'>
